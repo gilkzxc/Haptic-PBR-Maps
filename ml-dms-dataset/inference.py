@@ -10,6 +10,7 @@
 #
 
 import argparse
+from ast import If
 import torchvision.transforms as TTR
 import os
 import glob
@@ -36,25 +37,29 @@ srgb_colormap = np.array(srgb_colormap, dtype=np.uint8)
 def apply_color(label_mask):
     # translate labels to visualization colors
     # Begin Gil's code #
-    print(len(srgb_colormap)) #array size 46 and not 56...
-    material_list = []
+    material_dict = {}
+    sum_of_pixels = 0
     # End Gil's code 
     vis = np.take(srgb_colormap, label_mask, axis=0)
     # Begin Gil's code
-    #print(type(srgb_colormap[2][0]))
     for i in vis:
         for k in i:
-            print(k)
-            break
-            #print(type(k[0]))
-            #for material_index in dms46:
-                #if np.array_equal(k,srgb_colormap[material_index]):
-                    #print("True")
-                    #if not material_index in material_list:
-                        #material_list.append(material_index)
+            sum_of_pixels += 1
+            for j in range(len(t['srgb_colormap'])):
+                if np.array_equal(k,t['srgb_colormap'][j]):
+                    if not t['names'][j] in material_dict:
+                        material_dict[t['names'][j]] = 0
+                    material_dict[t['names'][j]] +=1
+                    break
+            
+    
+    
+    print(f"dict1: {material_dict}")
+    for material in material_dict.keys():
+        material_dict[material] /= sum_of_pixels
+        material_dict[material] *= 100
+    print(f"dict2: {material_dict}")
     # End Gil's code
-    for material_index in material_list:
-        print(t['names'][material_index])
     return vis[..., ::-1]
 
 
