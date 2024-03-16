@@ -33,8 +33,13 @@ srgb_colormap = [
 ]
 srgb_colormap = np.array(srgb_colormap, dtype=np.uint8)
 
-
+images_to_infere = {}
 def apply_color(label_mask):
+    # translate labels to visualization colors
+    vis = np.take(srgb_colormap, label_mask, axis=0)
+    return vis[..., ::-1]
+
+def apply_color2(label_mask):
     # translate labels to visualization colors
     # Begin Gil's code #
     material_dict = {}
@@ -51,9 +56,6 @@ def apply_color(label_mask):
                         material_dict[t['names'][j]] = 0
                     material_dict[t['names'][j]] +=1
                     break
-            
-    
-    
     print(f"dict1: {material_dict}")
     for material in material_dict.keys():
         material_dict[material] /= sum_of_pixels
@@ -62,6 +64,23 @@ def apply_color(label_mask):
     # End Gil's code
     return vis[..., ::-1]
 
+
+def fetch_prediciton(image_path, predicted_color):
+    vis = predicted_color[..., ::-1]
+    material_mapping = []
+    for row in vis:
+        material_mapping.append([])
+        for rgb_array in row:
+            images_to_infere[image_path]["num_of_pixels"] += 1
+            for material_index in range(len(t['srgb_colormap'])):
+                if np.array_equal(rgb_array,t['srgb_colormap'][material_index]):
+                    if not material_index in images_to_infere[image_path]["materials"]:
+                        images_to_infere[image_path]["materials"][material_index] = {"name":t['names'][material_index],
+                                                                                     "rgb_color":t['srgb_colormap'][material_index], "num_of_pixels":0}
+                    images_to_infere[image_path]["materials"][material_index]["num_of_pixels"] += 1
+                    material_mapping[-1].append(t['names'][material_index])
+                    break
+    return material_mapping
 
 def main(args):
     is_cuda = torch.cuda.is_available()
@@ -80,6 +99,7 @@ def main(args):
 
     for image_path in images_list:
         print(image_path)
+        images_to_infere[image_path] = {"num_of_pixels":0,"materials":{}}
         img = cv2.imread(image_path, cv2.IMREAD_COLOR)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         new_dim = 512
@@ -100,9 +120,9 @@ def main(args):
         with torch.no_grad():
             prediction = model(image)[0].data.cpu()[0, 0].numpy()
         original_image = img[..., ::-1]
-        
         predicted_colored = apply_color(prediction)
-        
+        #predicted_colored = apply_color2(prediction) //test for predicition fetch
+        material_mapping = fetch_prediciton(image_path,predicted_colored)
         stacked_img = np.concatenate(
             (np.uint8(original_image), predicted_colored), axis=1
         )
@@ -110,8 +130,16 @@ def main(args):
             f'{args.output_folder}/{os.path.splitext(os.path.basename(image_path))[0]}.png',
             stacked_img,
         )
-
-
+    # Test for statistics grab.
+    for image_path in images_to_infere:
+        print(image_path)
+        print(f"Image number of pixels: {images_to_infere[image_path]['num_of_pixels']}")
+        for material_index in images_to_infere[image_path]["materials"]:
+            print(f"Material name: {images_to_infere[image_path]['materials'][material_index]['name']}")
+            print(f"Material color: {images_to_infere[image_path]['materials'][material_index]['rgb_color']}")
+            print(f"Material num of pixels: {images_to_infere[image_path]['materials'][material_index]['num_of_pixels']}")
+            print("")
+            
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
