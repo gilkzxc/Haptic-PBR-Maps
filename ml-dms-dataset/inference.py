@@ -20,6 +20,8 @@ import cv2
 import numpy as np
 import torch
 import math
+import matplotlib.pyplot as plt
+
 from PIL import Image
 
 random.seed(112)
@@ -131,7 +133,6 @@ def main(args):
             stacked_img,
         )
     # Test for statistics grab.
-    for image_path in images_to_infere:
         print(image_path)
         print(f"Image number of pixels: {images_to_infere[image_path]['num_of_pixels']}")
         for material_index in images_to_infere[image_path]["materials"]:
@@ -139,7 +140,42 @@ def main(args):
             print(f"Material color: {images_to_infere[image_path]['materials'][material_index]['rgb_color']}")
             print(f"Material num of pixels: {images_to_infere[image_path]['materials'][material_index]['num_of_pixels']}")
             print("")
-            
+        # Extracting RGB values and counts
+        names = [images_to_infere[image_path]['materials'][material_index]['name'] for material_index in images_to_infere[image_path]["materials"]]
+        colors = [images_to_infere[image_path]['materials'][material_index]['rgb_color'] for material_index in images_to_infere[image_path]["materials"]]
+        counts = [images_to_infere[image_path]['materials'][material_index]['num_of_pixels'] for material_index in images_to_infere[image_path]["materials"]]
+
+        # Plotting histogram
+        plt.figure(figsize=(8, 6))
+        plt.bar(range(len(colors)), counts, color=[(r / 255, g / 255, b / 255) for (r, g, b) in colors])
+        plt.xticks(range(len(colors)), names, rotation=45)
+        plt.xlabel('Items')
+        plt.ylabel('Count')
+        plt.title('Histogram of RGB Colors')
+        plt.tight_layout()
+        plt.savefig('histogram.png')
+
+        histogram_image = Image.open('histogram.png')
+
+        # Display the concatenated image
+
+        # Save the concatenated image
+
+        ###histogram_imaghistogram_image
+        #histogram_image = Image.open('histogram.png')
+        #histogram_image_rgb = histogram_image.convert('RGB')
+        histogram_image_rgb = histogram_image.convert('RGB')
+        histogram_image_resized = histogram_image_rgb.resize((stacked_img.shape[0], stacked_img.shape[0]))
+        #stacked_image_resized = stacked_img_new.resize((stacked_img.shape[0], stacked_img.shape[0]))
+
+        combined_image = np.concatenate((stacked_img, histogram_image_resized), axis=1)
+
+        cv2.imwrite(
+             f'{args.output_folder}/{os.path.splitext(os.path.basename(image_path))[0]}.png',
+             combined_image,
+          )
+    
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
