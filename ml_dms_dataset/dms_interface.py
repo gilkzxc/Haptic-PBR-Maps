@@ -124,20 +124,31 @@ class infered_image:
         #fig.set_size_inches((d/fig.dpi for d in self.img.shape[:2][::-1]))
         plt.show()
         fig.canvas.draw()
-        self.histogram_img_plot = rgba2rgb(np.array(fig.canvas.buffer_rgba()))
+        rgb = rgba2rgb(np.array(fig.canvas.buffer_rgba()))
+        cv2.imwrite(f'~/output3/{os.path.splitext(os.path.basename(self.image_path))[0]}.png'
+                    ,rgb[..., ::-1],)
+        self.histogram_img_plot = rgb
+        #self.histogram_img_plot = rgba2rgb(np.array(fig.canvas.buffer_rgba()))
         return self.histogram_img_plot
         
     
     def write_concate_results(self,output_folder_path):
+        #OpenCV Works in a BGR format. Thus we need to flip.
         if self.was_predicted():
-            original_img = np.uint8(self.img[..., ::-1])
+            #original_img = np.uint8(self.img[..., ::-1])
+            original_img = self.img
             if isinstance(original_img,np.ndarray):
-                estimated_colors = self.estimated_colors[..., ::-1]
+                #estimated_colors = self.estimated_colors[..., ::-1]
+                estimated_colors = self.estimated_colors
                 if isinstance(estimated_colors,np.ndarray):
-                    histogram = self.histogram_img_plot[..., ::-1]
+                    #histogram = self.histogram_img_plot[..., ::-1]
+                    histogram = self.histogram_img_plot
                     if isinstance(histogram,np.ndarray):
                         stacked_img = np.concatenate((original_img, estimated_colors,histogram), axis=1)
-                        cv2.imwrite(f'{output_folder_path}/{os.path.splitext(os.path.basename(self.image_path))[0]}.png',stacked_img,)
+                        #cv2.imwrite(f'{output_folder_path}/{os.path.splitext(os.path.basename(self.image_path))[0]}.png',stacked_img,)
+                        cv2.imwrite(f'{output_folder_path}/{os.path.splitext(os.path.basename(self.image_path))[0]}.png',cv2.cvtColor(stacked_img, cv2.COLOR_RGB2BGR),)
+            
+            
 
 class infering_pipeline:
     def __init__(self,model_path,output_folder_path,parameters = inference.parameters):
