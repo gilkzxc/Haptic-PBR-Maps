@@ -11,6 +11,7 @@
 
 import argparse
 from ast import If
+from symbol import parameters
 import torchvision.transforms as TTR
 import os
 import glob
@@ -32,6 +33,10 @@ srgb_colormap = [
     t['srgb_colormap'][i] for i in range(len(t['srgb_colormap'])) if i in dms46
 ]
 srgb_colormap = np.array(srgb_colormap, dtype=np.uint8)
+
+parameters = {"value_scale":255}
+parameters["mean"] = [item * parameters["value_scale"] for item in [0.485, 0.456, 0.406]]
+parameters["std"] = [item * parameters["value_scale"] for item in [0.229, 0.224, 0.225]]
 
 images_to_infere = {}
 def apply_color(label_mask):
@@ -81,6 +86,10 @@ def fetch_prediciton(image_path, predicted_color):
                     material_mapping[-1].append(t['names'][material_index])
                     break
     return material_mapping
+
+
+        
+
 
 def main(args):
     is_cuda = torch.cuda.is_available()
