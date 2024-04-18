@@ -96,7 +96,8 @@ class infered_image:
                 for material_index in range(len(inference.t['srgb_colormap'])):
                     if np.array_equal(rgb_array,inference.t['srgb_colormap'][material_index]):
                         if not material_index in stats["materials"]:
-                            stats["materials"][material_index] = {"name":inference.t['names'][material_index],
+                            #stats["materials"][material_index] = {"name":inference.t['names'][material_index],
+                            stats["materials"][material_index] = {"name":inference.t['shortnames'][material_index],
                                                                                      "rgb_color":inference.t['srgb_colormap'][material_index],
                                                                                     "num_of_pixels":0}
                         stats["materials"][material_index]["num_of_pixels"] += 1
@@ -176,6 +177,7 @@ class infering_pipeline:
             head.write_concate_results(self.output_folder_path)
             print(f"Image {head.image_path} : Saved result in desired output file.")
             self.pipeline_infered.append(head)
+            print(f"Number of images left to infer: {len(self.pipeline_to_infer)}")
             
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
