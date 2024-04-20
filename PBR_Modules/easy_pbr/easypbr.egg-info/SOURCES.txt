@@ -1,0 +1,8 @@
+LICENSE
+README.md
+setup.py
+easypbr.egg-info/PKG-INFO
+easypbr.egg-info/SOURCES.txt
+easypbr.egg-info/dependency_links.txt
+easypbr.egg-info/not-zip-safe
+easypbr.egg-info/top_level.txt
