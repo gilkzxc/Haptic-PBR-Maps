@@ -18,3 +18,5 @@ dependencies:
         - datasets
         - diffusers
         - setuptools
+        - transformers
+        - accelerate

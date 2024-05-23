@@ -164,8 +164,7 @@ class infering_pipeline:
         self.pipeline_infered = deque([])
     def insert_into_infer(self, image_path):
         self.pipeline_to_infer.append(infered_image(image_path))
-    def run_pipeline(self):
-        #something
+    def run_pipeline(self): #Runs multiple material segmentation tasks
         os.makedirs(self.output_folder_path, exist_ok=True)
         while len(self.pipeline_to_infer) > 0:
             head = self.pipeline_to_infer.popleft()
@@ -178,6 +177,7 @@ class infering_pipeline:
             print(f"Image {head.image_path} : Saved result in desired output file.")
             self.pipeline_infered.append(head)
             print(f"Number of images left to infer: {len(self.pipeline_to_infer)}")
+    #def run_singleton(): #Runs single material segmentation task
             
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

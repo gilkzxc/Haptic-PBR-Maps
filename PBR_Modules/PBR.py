@@ -1,0 +1,243 @@
+#PBR class definition
+from curses import OK
+import moderngl
+from PIL import Image
+import numpy as np
+tile_maps_keys = ['basecolor','diffuse','displacement','height','normal','opeacity','roughness','specular','blend_mask']
+
+class PBR:
+    def __init__(self, render = None, tile_maps = None):
+        self.render = render
+        self.tile_maps = {}
+        if isinstance(tile_maps, dict):
+            for tile in tile_maps_keys:
+                if tile in tile_maps:
+                    self.tile_maps[tile] = tile_maps[tile]
+                else:
+                    self.tile_maps[tile] = None
+    def is_tile_maps_empty(self):
+        # Returns True when tile_maps is an empty dict, or when all values are None/False.
+        return self.tile_maps == {} or (not any(self.tile_maps.values()))
+    def to_render(self):
+        # Returns A PBR rendered material fit for Material Segmentation
+        if not self.render is None:
+            return self.render
+        if self.is_tile_maps_empty():
+            return None
+        
+        # Initialize ModernGL context
+        ctx = moderngl.create_context(standalone=True)
+        
+        # Load tile maps
+        texture_dict = {}
+        for tile in self.tile_maps:
+            if not self.tile_maps[tile] is None:
+                texture_dict[tile] = ctx.texture((512, 512), 4, self.tile_maps[tile].tobytes())
+        
+        #Shader Program         #Need to learn more on shader making.  
+        vertex_shader = """
+        #version 330
+            // Based on https://learnopengl.com/PBR/Theory
+            // textures from https://freepbr.com/
+            precision highp float;
+            uniform mat4 modelMatrix;
+            uniform mat4 modelViewMatrix;
+            uniform mat4 projectionMatrix;
+            uniform mat3 normalMatrix;
+            uniform mat4 textureRotation;
+            uniform vec2 textureRepeat;
+            in vec3 position;
+            in vec3 normal;
+            in vec2 uv;
+
+            out vec2 TexCoords;
+            out vec3 WorldPos;
+            out vec3 Normal;
+
+            void main()
+            {
+              WorldPos = vec3(modelMatrix * vec4(position, 1.0f));
+              Normal=normalMatrix*normal;
+              TexCoords=mat2(textureRotation)*(uv*textureRepeat);  
+              gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+            }
+        """
+        fragment_shader = """
+            #version 330 core
+            precision highp float;
+            // Based on https://learnopengl.com/PBR/Theory
+            // textures from https://freepbr.com/
+            in vec2 TexCoords;
+            in vec3 WorldPos;
+            in vec3 Normal;
+
+            layout (location =0) out vec4 fragColour;
+
+            // material parameters
+            uniform sampler2D albedoMap;
+            uniform sampler2D normalMap;
+            uniform sampler2D metallicMap;
+            uniform sampler2D roughnessMap;
+            uniform sampler2D aoMap;
+            uniform float roughnessScale;
+            // lights
+            uniform vec3 lightPositions[4];
+            uniform vec3 lightColors[4];
+            uniform float exposure;
+            uniform vec3 cameraPosition;
+
+            const float PI = 3.14159265359;
+            // ----------------------------------------------------------------------------
+            // Easy trick to get tangent-normals to world-space to keep PBR code simplified.
+            // Don't worry if you don't get what's going on; you generally want to do normal
+            // mapping the usual way for performance anways; I do plan make a note of this
+            // technique somewhere later in the normal mapping tutorial.
+            vec3 getNormalFromMap()
+            {
+                vec3 tangentNormal = texture(normalMap, TexCoords).xyz * 2.0 - 1.0;
+
+                vec3 Q1  = dFdx(WorldPos);
+                vec3 Q2  = dFdy(WorldPos);
+                vec2 st1 = dFdx(TexCoords);
+                vec2 st2 = dFdy(TexCoords);
+
+                vec3 N   = normalize(Normal);
+                vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
+                vec3 B  = -normalize(cross(N, T));
+                mat3 TBN = mat3(T, B, N);
+
+                return normalize(TBN * tangentNormal);
+            }
+            // ----------------------------------------------------------------------------
+            float DistributionGGX(vec3 N, vec3 H, float roughness)
+            {
+                float a = roughness*roughness;
+                float a2 = a*a;
+                float NdotH = max(dot(N, H), 0.0);
+                float NdotH2 = NdotH*NdotH;
+
+                float nom   = a2;
+                float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+                denom = PI * denom * denom;
+
+                return nom / denom;
+            }
+            // ----------------------------------------------------------------------------
+            float GeometrySchlickGGX(float NdotV, float roughness)
+            {
+                float r = (roughness + 1.0);
+                float k = (r*r) / 8.0;
+
+                float nom   = NdotV;
+                float denom = NdotV * (1.0 - k) + k;
+
+                return nom / denom;
+            }
+            // ----------------------------------------------------------------------------
+            float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
+            {
+                float NdotV = max(dot(N, V), 0.0);
+                float NdotL = max(dot(N, L), 0.0);
+                float ggx2 = GeometrySchlickGGX(NdotV, roughness);
+                float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+
+                return ggx1 * ggx2;
+            }
+            // ----------------------------------------------------------------------------
+            vec3 fresnelSchlick(float cosTheta, vec3 F0)
+            {
+                return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+            }
+            // ----------------------------------------------------------------------------
+            void main()
+            {
+                vec3 albedo     = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
+                float metallic  = texture(metallicMap, TexCoords).r;
+                float roughness = texture(roughnessMap, TexCoords).r*roughnessScale;
+                float ao        = texture(aoMap, TexCoords).r;
+
+                vec3 N = getNormalFromMap();
+                vec3 V = normalize(cameraPosition - WorldPos);
+
+                // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
+                // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
+                vec3 F0 = vec3(0.04);
+                F0 = mix(F0, albedo, metallic);
+
+                // reflectance equation
+                vec3 Lo = vec3(0.0);
+                for(int i = 0; i < 4; ++i)
+                {
+                    // calculate per-light radiance
+                    vec3 L = normalize(lightPositions[i] - WorldPos);
+                    vec3 H = normalize(V + L);
+                    float distance = length(lightPositions[i] - WorldPos);
+                    float attenuation = 1.0 / (distance * distance);
+                    vec3 radiance = lightColors[i] * attenuation;
+
+                    // Cook-Torrance BRDF
+                    float NDF = DistributionGGX(N, H, roughness);
+                    float G   = GeometrySmith(N, V, L, roughness);
+                    vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
+
+                    vec3 nominator    = NDF * G * F;
+                    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
+                    vec3 specular = nominator / denominator;
+
+                    // kS is equal to Fresnel
+                    vec3 kS = F;
+                    // for energy conservation, the diffuse and specular light can't
+                    // be above 1.0 (unless the surface emits light); to preserve this
+                    // relationship the diffuse component (kD) should equal 1.0 - kS.
+                    vec3 kD = vec3(1.0) - kS;
+                    // multiply kD by the inverse metalness such that only non-metals
+                    // have diffuse lighting, or a linear blend if partly metal (pure metals
+                    // have no diffuse light).
+                    kD *= 1.0 - metallic;
+
+                    // scale light by NdotL
+                    float NdotL = max(dot(N, L), 0.0);
+
+                    // add to outgoing radiance Lo
+                    Lo += (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+                }
+
+                // ambient lighting (note that the next IBL tutorial will replace
+                // this ambient lighting with environment lighting).
+                vec3 ambient = vec3(0.03) * albedo * ao;
+
+                vec3 color = ambient + Lo;
+
+                // HDR tonemapping
+                color = color / (color + vec3(1.0));
+                // gamma correct
+                color = pow(color, vec3(1.0/exposure));
+
+                fragColour = vec4(color, 1.0);
+            }
+
+            """
+        prog = ctx.program(vertex_shader=vertex_shader, fragment_shader=fragment_shader)
+        
+        
+        vertices = np.asarray([
+
+            -0.75, -0.75,  1, 0, 0,
+            0.75, -0.75,  0, 1, 0,
+            0.0, 0.649,  0, 0, 1
+            p_x, p_y, p_z  n_x, n_y, n_z,  uv_1, uv_2
+
+        ], dtype='f4')
+        vbo = ctx.buffer(vertices.tobytes())
+        vao = ctx.vertex_array(prog, vbo, "position", "normal", "uv")
+        fbo = ctx.framebuffer(color_attachments=[ctx.texture((512, 512), 3)])
+        fbo.use()
+        fbo.clear(0.0, 0.0, 0.0, 1.0)
+        vao.render()
+        image = Image.frombytes("RGB",fbo.size, fbo.color_attachments[0].read(),"raw", "RGB", 0, -1) #PIL Image Object.
+        result = #image in the wanted format either PIL or numpy array.
+        if result_ok:
+            self.render = result
+            return result
+        self.render = None
+        return None
