@@ -34,7 +34,9 @@ class PBR:
             if not self.tile_maps[tile] is None:
                 texture_dict[tile] = ctx.texture((512, 512), 4, self.tile_maps[tile].tobytes())
         
-        #Shader Program         #Need to learn more on shader making.  
+        #Shader Program         #Need to learn more on shader making.
+        #Vertex and Fragment shader - @Credit Jon Macey
+        # Based on PBR lectures from https://nccastaff.bournemouth.ac.uk/jmacey/
         vertex_shader = """
         #version 330
             // Based on https://learnopengl.com/PBR/Theory
@@ -219,15 +221,58 @@ class PBR:
             """
         prog = ctx.program(vertex_shader=vertex_shader, fragment_shader=fragment_shader)
         
-        
+        # Define vertices for a cube
         vertices = np.asarray([
+            # Positions          Normals             Texture Coords(u,v)
+            # Back face
+            -1.0, -1.0, -1.0,    0.0,  0.0, -1.0,    0.0, 0.0,
+             1.0, -1.0, -1.0,    0.0,  0.0, -1.0,    1.0, 0.0,
+             1.0,  1.0, -1.0,    0.0,  0.0, -1.0,    1.0, 1.0,
+             1.0,  1.0, -1.0,    0.0,  0.0, -1.0,    1.0, 1.0,
+            -1.0,  1.0, -1.0,    0.0,  0.0, -1.0,    0.0, 1.0,
+            -1.0, -1.0, -1.0,    0.0,  0.0, -1.0,    0.0, 0.0,
 
-            -0.75, -0.75,  1, 0, 0,
-            0.75, -0.75,  0, 1, 0,
-            0.0, 0.649,  0, 0, 1
-            p_x, p_y, p_z  n_x, n_y, n_z,  uv_1, uv_2
+            # Front face
+            -1.0, -1.0,  1.0,    0.0,  0.0,  1.0,    0.0, 0.0,
+             1.0, -1.0,  1.0,    0.0,  0.0,  1.0,    1.0, 0.0,
+             1.0,  1.0,  1.0,    0.0,  0.0,  1.0,    1.0, 1.0,
+             1.0,  1.0,  1.0,    0.0,  0.0,  1.0,    1.0, 1.0,
+            -1.0,  1.0,  1.0,    0.0,  0.0,  1.0,    0.0, 1.0,
+            -1.0, -1.0,  1.0,    0.0,  0.0,  1.0,    0.0, 0.0,
 
+            # Left face
+            -1.0,  1.0,  1.0,   -1.0,  0.0,  0.0,    1.0, 0.0,
+            -1.0,  1.0, -1.0,   -1.0,  0.0,  0.0,    1.0, 1.0,
+            -1.0, -1.0, -1.0,   -1.0,  0.0,  0.0,    0.0, 1.0,
+            -1.0, -1.0, -1.0,   -1.0,  0.0,  0.0,    0.0, 1.0,
+            -1.0, -1.0,  1.0,   -1.0,  0.0,  0.0,    0.0, 0.0,
+            -1.0,  1.0,  1.0,   -1.0,  0.0,  0.0,    1.0, 0.0,
+
+            # Right face
+             1.0,  1.0,  1.0,    1.0,  0.0,  0.0,    1.0, 0.0,
+             1.0,  1.0, -1.0,    1.0,  0.0,  0.0,    1.0, 1.0,
+             1.0, -1.0, -1.0,    1.0,  0.0,  0.0,    0.0, 1.0,
+             1.0, -1.0, -1.0,    1.0,  0.0,  0.0,    0.0, 1.0,
+             1.0, -1.0,  1.0,    1.0,  0.0,  0.0,    0.0, 0.0,
+             1.0,  1.0,  1.0,    1.0,  0.0,  0.0,    1.0, 0.0,
+
+            # Bottom face
+            -1.0, -1.0, -1.0,    0.0, -1.0,  0.0,    0.0, 0.0,
+             1.0, -1.0, -1.0,    0.0, -1.0,  0.0,    1.0, 0.0,
+             1.0, -1.0,  1.0,    0.0, -1.0,  0.0,    1.0, 1.0,
+             1.0, -1.0,  1.0,    0.0, -1.0,  0.0,    1.0, 1.0,
+            -1.0, -1.0,  1.0,    0.0, -1.0,  0.0,    0.0, 1.0,
+            -1.0, -1.0, -1.0,    0.0, -1.0,  0.0,    0.0, 0.0,
+
+            # Top face
+            -1.0,  1.0, -1.0,    0.0,  1.0,  0.0,    0.0, 0.0,
+             1.0,  1.0, -1.0,    0.0,  1.0,  0.0,    1.0, 0.0,
+             1.0,  1.0,  1.0,    0.0,  1.0,  0.0,    1.0, 1.0,
+             1.0,  1.0,  1.0,    0.0,  1.0,  0.0,    1.0, 1.0,
+            -1.0,  1.0,  1.0,    0.0,  1.0,  0.0,    0.0, 1.0,
+            -1.0,  1.0, -1.0,    0.0,  1.0,  0.0,    0.0, 0.0
         ], dtype='f4')
+
         vbo = ctx.buffer(vertices.tobytes())
         vao = ctx.vertex_array(prog, vbo, "position", "normal", "uv")
         fbo = ctx.framebuffer(color_attachments=[ctx.texture((512, 512), 3)])
@@ -236,8 +281,10 @@ class PBR:
         vao.render()
         image = Image.frombytes("RGB",fbo.size, fbo.color_attachments[0].read(),"raw", "RGB", 0, -1) #PIL Image Object.
         result = #image in the wanted format either PIL or numpy array.
-        if result_ok:
+        """if result_ok:
             self.render = result
             return result
         self.render = None
-        return None
+        return None"""
+        self.render = result
+        return result

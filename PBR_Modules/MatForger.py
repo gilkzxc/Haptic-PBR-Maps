@@ -7,7 +7,7 @@ from collections import deque
 from os import path
 
 class PBR_diffusion_pipeline:
-    def __init__(self,output_folder_path):
+    def __init__(self):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.pipe = StableDiffusionPipeline.from_pretrained("gvecchio/MatForger",trust_remote_code=True,)
         self.pipe.enable_vae_tiling()

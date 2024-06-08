@@ -14,6 +14,7 @@ import math
 from PIL import Image
 from collections import deque
 import matplotlib.pyplot as plt
+from os.path import isfile
 
 pretrained_path = "./DMS46_v1.pt"
 
@@ -36,8 +37,9 @@ def rgba2rgb( rgba, background=(255,255,255) ):
     return np.asarray( rgb, dtype='uint8' )
 
 class infered_image:
-    def __init__(self,image_path):
+    def __init__(self,image_path,output_folder_path):
         self.image_path = image_path
+        self.output_folder_path = output_folder_path
         img = cv2.imread(image_path, cv2.IMREAD_COLOR)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         new_dim = 512
@@ -133,7 +135,8 @@ class infered_image:
         return self.histogram_img_plot
         
     
-    def write_concate_results(self,output_folder_path):
+    #def write_concate_results(self,output_folder_path):
+    def write_concate_results(self):
         #OpenCV Works in a BGR format. Thus we need to flip.
         if self.was_predicted():
             #original_img = np.uint8(self.img[..., ::-1])
@@ -147,37 +150,52 @@ class infered_image:
                     if isinstance(histogram,np.ndarray):
                         stacked_img = np.concatenate((original_img, estimated_colors,histogram), axis=1)
                         #cv2.imwrite(f'{output_folder_path}/{os.path.splitext(os.path.basename(self.image_path))[0]}.png',stacked_img,)
-                        cv2.imwrite(f'{output_folder_path}/{os.path.splitext(os.path.basename(self.image_path))[0]}.png',cv2.cvtColor(stacked_img, cv2.COLOR_RGB2BGR),)
+                        os.makedirs(self.output_folder_path, exist_ok=True)
+                        #cv2.imwrite(f'{output_folder_path}/{os.path.splitext(os.path.basename(self.image_path))[0]}.png',cv2.cvtColor(stacked_img, cv2.COLOR_RGB2BGR),)
+                        cv2.imwrite(f'{self.output_folder_path}/{os.path.splitext(os.path.basename(self.image_path))[0]}.png',cv2.cvtColor(stacked_img, cv2.COLOR_RGB2BGR),)
             
             
 
 class infering_pipeline:
-    def __init__(self,model_path,output_folder_path,parameters = inference.parameters):
+    #def __init__(self,model_path,output_folder_path,parameters = inference.parameters):
+    def __init__(self,model_path,parameters = inference.parameters):    
         self.mean = parameters["mean"]
         self.std = parameters["std"]
-        self.output_folder_path = output_folder_path
+        #self.output_folder_path = output_folder_path
         self.is_cuda = torch.cuda.is_available()
         self.model = torch.jit.load(model_path)
         if self.is_cuda:
             self.model = self.model.cuda()
         self.pipeline_to_infer = deque([])
         self.pipeline_infered = deque([])
-    def insert_into_infer(self, image_path):
-        self.pipeline_to_infer.append(infered_image(image_path))
+    def insert_into_infer(self, image_path, output_folder_path):
+        self.pipeline_to_infer.append(infered_image(image_path,output_folder_path))
+    def run_singleton(self, infered_image_obj): #Runs single material segmentation task
+        """if isinstance(infered_image_obj, str) and isfile(infered_image_obj):
+            infered_image_obj = infered_image(infered_image_obj)"""
+        if not isinstance(infered_image_obj, infered_image):
+            return None
+        #os.makedirs(self.output_folder_path, exist_ok=True)
+        result = {}
+        print(f"Image {infered_image_obj.image_path} : Running Material Segmentation model...")
+        result["estimation_color"] = infered_image_obj.estimation(self.is_cuda,self.model,self.mean,self.std)
+        result["material_mapping"] = infered_image_obj.fetch_estimation()
+        print(f"Image {infered_image_obj.image_path} stats:\n{infered_image_obj.stats}")
+        result["histogram"] = infered_image_obj.histogram()
+        infered_image_obj.write_concate_results(self.output_folder_path)
+        print(f"Image {infered_image_obj.image_path} : Saved result in desired output file.")
+        result["object"] = infered_image_obj
+        return result
     def run_pipeline(self): #Runs multiple material segmentation tasks
-        os.makedirs(self.output_folder_path, exist_ok=True)
+        #os.makedirs(self.output_folder_path, exist_ok=True)
         while len(self.pipeline_to_infer) > 0:
             head = self.pipeline_to_infer.popleft()
-            print(f"Image {head.image_path} : Running Material Segmentation model...")
-            estimation_color = head.estimation(self.is_cuda,self.model,self.mean,self.std)
-            material_mapping = head.fetch_estimation()
-            print(f"Image {head.image_path} stats:\n{head.stats}")
-            np.histogram = head.histogram()
-            head.write_concate_results(self.output_folder_path)
-            print(f"Image {head.image_path} : Saved result in desired output file.")
-            self.pipeline_infered.append(head)
+            run_singleton_result = self.run_singleton(head)
+            if run_singleton_result is None:
+                print("ERROR")
+            self.pipeline_infered.append(run_singleton_result["object"])
             print(f"Number of images left to infer: {len(self.pipeline_to_infer)}")
-    #def run_singleton(): #Runs single material segmentation task
+    
             
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -202,11 +220,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
     images_list = glob.glob(f'{args.image_folder}/*')
     print("Initiating pipelines.")
-    test_pipe = infering_pipeline(args.pretrained_path,args.output_folder)
+    #test_pipe = infering_pipeline(args.pretrained_path,args.output_folder)
+    test_pipe = infering_pipeline(args.pretrained_path)
     print("Inserting images into pipelines.")
     for image_path in images_list:
         print(image_path)
-        test_pipe.insert_into_infer(image_path)
+        test_pipe.insert_into_infer(image_path,args.output_folder)
     print("Begin workload...")
     test_pipe.run_pipeline()
     print("Done...")
