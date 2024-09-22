@@ -53,6 +53,11 @@ class Task:
             
             return True
         elif self.nextState == States["MS"]:
+            ms_result = self.material_segmentation(dms_pipeline,input_folder_path)
+            if ms_result is None:
+                print("ERROR")
+                return False
+            ms_
             
             
 Tasks = []

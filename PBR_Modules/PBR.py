@@ -3,7 +3,7 @@ from curses import OK
 import moderngl
 from PIL import Image
 import numpy as np
-tile_maps_keys = ['basecolor','diffuse','displacement','height','normal','opeacity','roughness','specular','blend_mask']
+tile_maps_keys = ['basecolor','diffuse','displacement','height','metallic','normal','opeacity','roughness','specular','blend_mask']
 
 class PBR:
     def __init__(self, render = None, tile_maps = None):
@@ -15,6 +15,15 @@ class PBR:
                     self.tile_maps[tile] = tile_maps[tile]
                 else:
                     self.tile_maps[tile] = None
+        self.model_matrix = np.eye(4, dtype=np.float32)  # Identity matrix by default
+        self.view_matrix = np.eye(4, dtype=np.float32)  # Identity matrix for simplicity
+        self.projection_matrix = np.eye(4, dtype=np.float32)  # Default to identity
+        self.texture_rotation = np.eye(4, dtype=np.float32)  # No texture rotation by default
+        self.texture_repeat = (1.0, 1.0)  # Default to no repeat
+    def set_matrices(self, model, view, projection):
+        self.model_matrix = model
+        self.view_matrix = view
+        self.projection_matrix = projection
     def is_tile_maps_empty(self):
         # Returns True when tile_maps is an empty dict, or when all values are None/False.
         return self.tile_maps == {} or (not any(self.tile_maps.values()))
@@ -34,6 +43,20 @@ class PBR:
             if not self.tile_maps[tile] is None:
                 texture_dict[tile] = ctx.texture((512, 512), 4, self.tile_maps[tile].tobytes())
         
+        # Load tile maps (assuming self.tile_maps contains PIL Image objects)
+        texture_dict = {}
+        for key in tile_maps_keys:
+            if self.tile_maps.get(key) is not None:
+                # Convert PIL Image to bytes and then create texture
+                image = self.tile_maps[key]
+                texture_dict[key] = ctx.texture(image.size, 4, image.tobytes())
+            else:
+                # If the texture is missing, create a default grey texture
+                texture_dict[key] = ctx.texture((1, 1), 4, np.ones((1, 1, 4), dtype=np.uint8).tobytes()) # Should fit into right size?
+
+            # Bind texture to a texture unit
+            texture_dict[key].use(location=tile_maps_keys.index(key))
+
         #Shader Program         #Need to learn more on shader making.
         #Vertex and Fragment shader - @Credit Jon Macey
         # Based on PBR lectures from https://nccastaff.bournemouth.ac.uk/jmacey/
@@ -274,17 +297,61 @@ class PBR:
         ], dtype='f4')
 
         vbo = ctx.buffer(vertices.tobytes())
+        
+        # Set matrices and other uniforms
+        prog['modelMatrix'].write(self.model_matrix.tobytes())
+        model_view_matrix = np.dot(self.view_matrix, self.model_matrix)
+        prog['modelViewMatrix'].write(model_view_matrix.tobytes())
+        prog['projectionMatrix'].write(self.projection_matrix.tobytes())
+        
+        # Normal matrix is the inverse transpose of the upper-left 3x3 submatrix
+        normal_matrix = np.linalg.inv(model_view_matrix[:3, :3]).T
+        prog['normalMatrix'].write(normal_matrix.tobytes())
+
+        
+        # Texture repeat and rotation
+        prog['textureRotation'].write(self.texture_rotation.tobytes())
+        prog['textureRepeat'].value = self.texture_repeat
+
+        light_positions = np.array([
+            [10.0, 10.0, 10.0],
+            [0.0, 10.0, 0.0],
+            [-10.0, -10.0, 10.0],
+            [10.0, -10.0, 0.0]
+        ], dtype='f4')
+
+        light_colors = np.array([
+            [300.0, 300.0, 300.0],
+            [300.0, 0.0, 0.0],
+            [0.0, 300.0, 0.0],
+            [0.0, 0.0, 300.0]
+        ], dtype='f4')
+
+        prog['lightPositions'].write(light_positions.tobytes())  # Pass light positions
+        prog['lightColors'].write(light_colors.tobytes())  # Pass light colors
+
+        prog['cameraPosition'].write(self.camera_position.tobytes())  # Pass camera position (3D vector)
+
+        prog['roughnessScale'].value = 1.0  # Set roughness scale
+        prog['exposure'].value = 1.0  # Set exposure
+
+        # Binding textures
+        texture_dict['basecolor'].use(0)  # Albedo
+        texture_dict['normal'].use(1)     # Normal
+        texture_dict['metallic'].use(2)   # Metallic
+        texture_dict['roughness'].use(3)  # Roughness
+
         vao = ctx.vertex_array(prog, vbo, "position", "normal", "uv")
         fbo = ctx.framebuffer(color_attachments=[ctx.texture((512, 512), 3)])
         fbo.use()
         fbo.clear(0.0, 0.0, 0.0, 1.0)
         vao.render()
         image = Image.frombytes("RGB",fbo.size, fbo.color_attachments[0].read(),"raw", "RGB", 0, -1) #PIL Image Object.
-        result = #image in the wanted format either PIL or numpy array.
+        #result = #image in the wanted format either PIL or numpy array.
         """if result_ok:
             self.render = result
             return result
         self.render = None
         return None"""
-        self.render = result
-        return result
+        self.render = image
+        return image
