@@ -22,8 +22,15 @@ import numpy as np
 import torch
 import math
 from PIL import Image
-
+import yaml
+import re
+import matplotlib.pyplot as plt
 random.seed(112)
+
+characteristics=['YoungsModulus','PoissonRatio','Density']
+
+char_dict = {}
+
 
 dms46 = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 23,
     24, 26, 27, 29, 30, 32, 33, 34, 35, 36, 37, 38, 39, 41, 43, 44, 46, 47, 48, 49,
@@ -87,11 +94,99 @@ def fetch_prediciton(image_path, predicted_color):
                     break
     return material_mapping
 
+def create_maps(predicted_color):
+    pixel_array = np.apply_along_axis(get_pixel_matrial, axis=2, arr=predicted_color)
+    print(pixel_array.shape)
+    dict={}
+    dict['Density'] = get_type_value(pixel_array,'Density')
+    dict['YoungsModulus'] = get_type_value(pixel_array,'YoungsModulus')
+    dict['PoissonRatio'] = get_type_value(pixel_array,'PoissonRatio')
 
-        
+    return dict
+
+def get_type_value(pixel_array, param):
+    new_array = np.zeros_like(pixel_array, dtype=float)
+    rows, cols = pixel_array.shape
+    for i in range(rows):
+        for j in range(cols):
+            characteristics = char_dict.get(pixel_array[i, j])
+            if(i==0):
+                print(pixel_array[i, j])
+            if characteristics:
+                new_array[i, j] = characteristics[param]
+            else:
+                new_array[i, j] = np.nan
+    return new_array
+
+
+def get_pixel_matrial(rgb_array):
+    real_array=rgb_array[..., ::-1]
+    for material_index in range(len(t['srgb_colormap'])):
+        if np.array_equal(real_array, t['srgb_colormap'][material_index]):
+            name = t['names'][material_index]
+            return name
+    return ''
+
+def read(filename, material_data):
+    # Load the YAML file
+    with open(filename, 'r') as file:
+        data = yaml.safe_load(file)
+
+
+    print(data)
+    # Extract values
+    youngs_modulus_str = data['Models']['IsotropicLinearElastic']['YoungsModulus']
+    poisson_ratio_str = data['Models']['IsotropicLinearElastic']['PoissonRatio']
+    density_str = data['Models']['Density']['Density']
+
+    # Define regular expressions for parsing
+    pattern = r'(\d+(\.\d+)?)\s*(\w*)'
+    matcher = re.match(pattern, youngs_modulus_str)
+    youngs_modulus = float(matcher.group(1))
+    youngs_modulus_unit = matcher.group(3)
+
+    matcher = re.match(pattern, poisson_ratio_str)
+    poisson_ratio = float(matcher.group(1))
+    poisson_ratio_unit = matcher.group(3)
+
+    matcher = re.match(pattern, density_str)
+    density = float(matcher.group(1))
+    density_unit = matcher.group(3)
+
+    # Add values under the key specified by 'Name'
+    material_name = data['General']['Name']
+    print(material_name)
+    material_data[material_name] = {
+        'YoungsModulus': youngs_modulus,
+        'YoungsModulusUnit': youngs_modulus_unit,
+        'PoissonRatio': poisson_ratio,
+        'PoissonRatioUnit': poisson_ratio_unit,
+        'Density': density,
+        'DensityUnit': density_unit
+    }
+
+def print_map(map):
+    # Plot grayscale maps
+    plt.figure(figsize=(12, 6))
+    i=1
+    cmap = plt.cm.gray_r
+    cmap.set_bad(color='lightcoral')
+    for key, value in map.items():
+        plt.subplot(1, 3, i)
+        i=i+1
+        plt.imshow(value, cmap=cmap, aspect='auto')
+        plt.title(key)
+        plt.colorbar(label=key)
+
+    plt.tight_layout()
+    plt.show()
 
 
 def main(args):
+    mat_list = glob.glob(f'{args.mat_folder}/*')
+    for mat_path in mat_list:
+        read(mat_path, char_dict)
+    print(char_dict)
     is_cuda = torch.cuda.is_available()
     model = torch.jit.load(args.jit_path)
     if is_cuda:
@@ -132,6 +227,9 @@ def main(args):
         predicted_colored = apply_color(prediction)
         #predicted_colored = apply_color2(prediction) //test for predicition fetch
         material_mapping = fetch_prediciton(image_path,predicted_colored)
+        maps = create_maps(predicted_colored)
+        print_map(maps)
+
         stacked_img = np.concatenate(
             (np.uint8(original_image), predicted_colored), axis=1
         )
@@ -148,7 +246,10 @@ def main(args):
             print(f"Material color: {images_to_infere[image_path]['materials'][material_index]['rgb_color']}")
             print(f"Material num of pixels: {images_to_infere[image_path]['materials'][material_index]['num_of_pixels']}")
             print("")
-            
+
+
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -165,6 +266,12 @@ if __name__ == '__main__':
     )
     parser.add_argument(
         '--output_folder',
+        type=str,
+        default='',
+        help='overwrite the data_path for local runs',
+    )
+    parser.add_argument(
+        '--mat_folder',
         type=str,
         default='',
         help='overwrite the data_path for local runs',

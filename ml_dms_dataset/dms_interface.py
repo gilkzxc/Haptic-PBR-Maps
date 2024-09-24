@@ -14,10 +14,16 @@ import math
 from PIL import Image
 from collections import deque
 import matplotlib.pyplot as plt
+import yaml
+import re
 
 pretrained_path = "./DMS46_v1.pt"
 
 random.seed(112)
+
+characteristics=['YoungsModulus','PoissonRatio','Density']
+
+char_dict = {}
 def is_valid_img(img):
     return True
 
@@ -80,6 +86,7 @@ class infered_image:
             estimation_label_mask = model(image)[0].data.cpu()[0, 0].numpy()
          
         self.estimated_colors = inference.apply_color(estimation_label_mask)[..., ::-1] #Remember apply_color returns backwards
+        print(self.estimated_colors)
         return self.estimated_colors
         
     def fetch_estimation(self):
@@ -178,7 +185,44 @@ class infering_pipeline:
             print(f"Image {head.image_path} : Saved result in desired output file.")
             self.pipeline_infered.append(head)
             print(f"Number of images left to infer: {len(self.pipeline_to_infer)}")
-            
+
+
+def read(filename, material_data):
+    # Load the YAML file
+    with open(filename, 'r') as file:
+        data = yaml.safe_load(file)
+
+    # Extract values
+    youngs_modulus_str = data['Models']['IsotropicLinearElastic']['YoungsModulus']
+    poisson_ratio_str = data['Models']['IsotropicLinearElastic']['PoissonRatio']
+    density_str = data['Models']['Density']['Density']
+
+    # Define regular expressions for parsing
+    pattern = r'(\d+(\.\d+)?)\s*(\w*)'
+    matcher = re.match(pattern, youngs_modulus_str)
+    youngs_modulus = float(matcher.group(1))
+    youngs_modulus_unit = matcher.group(3)
+
+    matcher = re.match(pattern, poisson_ratio_str)
+    poisson_ratio = float(matcher.group(1))
+    poisson_ratio_unit = matcher.group(3)
+
+    matcher = re.match(pattern, density_str)
+    density = float(matcher.group(1))
+    density_unit = matcher.group(3)
+
+    # Add values under the key specified by 'Name'
+    material_name = data['General']['Name']
+    print(material_name)
+    material_data[material_name] = {
+        'YoungsModulus': youngs_modulus,
+        'YoungsModulusUnit': youngs_modulus_unit,
+        'PoissonRatio': poisson_ratio,
+        'PoissonRatioUnit': poisson_ratio_unit,
+        'Density': density,
+        'DensityUnit': density_unit
+    }
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -199,7 +243,18 @@ if __name__ == '__main__':
         default='',
         help='overwrite the data_path for local runs',
     )
+    parser.add_argument(
+        '--mat_folder',
+        type=str,
+        default='',
+        help='overwrite the data_path for local runs',
+    )
     args = parser.parse_args()
+    mat_list = glob.glob(f'{args.mat_folder}/*')
+    #for mat_path in mat_list:
+        #read(mat_path, char_dict)
+    #print(char_dict)
+
     images_list = glob.glob(f'{args.image_folder}/*')
     print("Initiating pipelines.")
     test_pipe = infering_pipeline(args.pretrained_path,args.output_folder)
