@@ -1,0 +1,261 @@
+{
+  "Wood": {
+    "Young's Modulus": {
+      "value": 12,
+      "units": "GPa",
+      "reference": "https://material-properties.org/wood"
+    },
+    "Poisson's Ratio": {
+      "value": 0.35,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html"
+    },
+    "Thermal Conductivity": {
+      "value": 0.12,
+      "units": "W/m·K",
+      "reference": "https://material-properties.org/wood"
+    },
+    "Specific Heat Capacity": {
+      "value": 2400,
+      "units": "J/kg·K",
+      "reference": "https://material-properties.org/wood"
+    },
+    "Surface Roughness": {
+      "value": 6.4,
+      "units": "µm",
+      "reference": "https://www.engineeringtoolbox.com/roughness-surface-d_1847.html"
+    },
+    "Coefficient of Friction": {
+      "value": 0.4,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/friction-coefficients-d_778.html"
+    }
+  },
+  "Metal": {
+    "Young's Modulus": {
+      "value": 200,
+      "units": "GPa",
+      "reference": "https://material-properties.org/steel"
+    },
+    "Poisson's Ratio": {
+      "value": 0.3,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html"
+    },
+    "Thermal Conductivity": {
+      "value": 50,
+      "units": "W/m·K",
+      "reference": "https://material-properties.org/steel"
+    },
+    "Specific Heat Capacity": {
+      "value": 500,
+      "units": "J/kg·K",
+      "reference": "https://material-properties.org/steel"
+    },
+    "Surface Roughness": {
+      "value": 0.8,
+      "units": "µm",
+      "reference": "https://www.engineeringtoolbox.com/roughness-surface-d_1847.html"
+    },
+    "Coefficient of Friction": {
+      "value": 0.2,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/friction-coefficients-d_778.html"
+    }
+  },
+  "Stone": {
+    "Young's Modulus": {
+      "value": 60,
+      "units": "GPa",
+      "reference": "https://material-properties.org/granite"
+    },
+    "Poisson's Ratio": {
+      "value": 0.25,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html"
+    },
+    "Thermal Conductivity": {
+      "value": 1.7,
+      "units": "W/m·K",
+      "reference": "https://material-properties.org/granite"
+    },
+    "Specific Heat Capacity": {
+      "value": 790,
+      "units": "J/kg·K",
+      "reference": "https://material-properties.org/granite"
+    },
+    "Surface Roughness": {
+      "value": 4.2,
+      "units": "µm",
+      "reference": "https://www.engineeringtoolbox.com/roughness-surface-d_1847.html"
+    },
+    "Coefficient of Friction": {
+      "value": 0.5,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/friction-coefficients-d_778.html"
+    }
+  },
+  "Leather": {
+    "Young's Modulus": {
+      "value": 0.5,
+      "units": "GPa",
+      "reference": "https://material-properties.org/leather"
+    },
+    "Poisson's Ratio": {
+      "value": 0.4,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html"
+    },
+    "Thermal Conductivity": {
+      "value": 0.2,
+      "units": "W/m·K",
+      "reference": "https://material-properties.org/leather"
+    },
+    "Specific Heat Capacity": {
+      "value": 1600,
+      "units": "J/kg·K",
+      "reference": "https://material-properties.org/leather"
+    },
+    "Surface Roughness": {
+      "value": 2.1,
+      "units": "µm",
+      "reference": "https://www.engineeringtoolbox.com/roughness-surface-d_1847.html"
+    },
+    "Coefficient of Friction": {
+      "value": 0.6,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/friction-coefficients-d_778.html"
+    }
+  },
+  "Fabric": {
+    "Young's Modulus": {
+      "value": 0.3,
+      "units": "GPa",
+      "reference": "https://material-properties.org/cotton"
+    },
+    "Poisson's Ratio": {
+      "value": 0.35,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html"
+    },
+    "Thermal Conductivity": {
+      "value": 0.04,
+      "units": "W/m·K",
+      "reference": "https://material-properties.org/cotton"
+    },
+    "Specific Heat Capacity": {
+      "value": 1400,
+      "units": "J/kg·K",
+      "reference": "https://material-properties.org/cotton"
+    },
+    "Surface Roughness": {
+      "value": 3.5,
+      "units": "µm",
+      "reference": "https://www.engineeringtoolbox.com/roughness-surface-d_1847.html"
+    },
+    "Coefficient of Friction": {
+      "value": 0.7,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/friction-coefficients-d_778.html"
+    }
+  },
+  "Concrete": {
+    "Young's Modulus": {
+      "value": 30,
+      "units": "GPa",
+      "reference": "https://material-properties.org/concrete"
+    },
+    "Poisson's Ratio": {
+      "value": 0.2,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html"
+    },
+    "Thermal Conductivity": {
+      "value": 1.5,
+      "units": "W/m·K",
+      "reference": "https://material-properties.org/concrete",
+      "link using other refernces?": "Yes/No",
+      "citation": "/path/to/screenshot.imgfiletype"
+    },
+    "Specific Heat Capacity": {
+      "value": 900,
+      "units": "J/kg·K",
+      "reference": "https://material-properties.org/concrete"
+    },
+    "Surface Roughness": {
+      "value": 8.2,
+      "units": "µm",
+      "reference": "https://www.engineeringtoolbox.com/roughness-surface-d_1847.html"
+    },
+    "Coefficient of Friction": {
+      "value": 0.7,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/friction-coefficients-d_778.html"
+    }
+  },
+  "Ceramic": {
+    "Young's Modulus": {
+      "value": 300,
+      "units": "GPa",
+      "reference": "https://material-properties.org/ceramic"
+    },
+    "Poisson's Ratio": {
+      "value": 0.2,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html"
+    },
+    "Thermal Conductivity": {
+      "value": 20,
+      "units": "W/m·K",
+      "reference": "https://material-properties.org/ceramic"
+    },
+    "Specific Heat Capacity": {
+      "value": 1000,
+      "units": "J/kg·K",
+      "reference": "https://material-properties.org/ceramic"
+    },
+    "Surface Roughness": {
+      "value": 1.5,
+      "units": "µm",
+      "reference": "https://www.engineeringtoolbox.com/roughness-surface-d_1847.html"
+    },
+    "Coefficient of Friction": {
+      "value": 0.2,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/friction-coefficients-d_778.html"
+    }
+  },
+  "Soil": {
+    "Young's Modulus": {
+      "value": 0.05,
+      "units": "GPa",
+      "reference": "https://www.geotechdata.info/parameter/soil-elastic-modulus.html",
+      "citation": ""
+    },
+    "Poisson's Ratio": {
+      "value": 0.3,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html"
+    },
+    "Thermal Conductivity": {
+      "value": 0.25,
+      "units": "W/m·K",
+      "reference": "https://www.geotechdata.info/parameter/soil-thermal-conductivity.html"
+    },
+    "Specific Heat Capacity": {
+      "value": 800,
+      "units": "J/kg·K",
+      "reference": "https://www.geotechdata.info/parameter/soil-specific-heat-capacity.html"
+    },
+    "Surface Roughness": {
+      "value": 12.0,
+      "units": "µm",
+      "reference": "https://www.engineeringtoolbox.com/roughness-surface-d_1847.html"
+    },
+    "Coefficient of Friction": {
+      "value": 0.6,
+      "units": "",
+      "reference": "https://www.engineeringtoolbox.com/friction-coefficients-d_778.html"
+    }
+  }
+}
