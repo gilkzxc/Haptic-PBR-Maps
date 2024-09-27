@@ -20,13 +20,17 @@ def process_batch(examples):
 
 
 class MatSynth:
-    def __init__(self, dataset = None):
+    def __init__(self, dataset = None, is_streaming = True):
         # load the dataset in streaming mode
         if dataset is None:
-            self.dataset = load_dataset("gvecchio/MatSynth", streaming = True,)
+            self.dataset = load_dataset("gvecchio/MatSynth", streaming = is_streaming,)
         else:
             self.dataset = dataset
-            
+     
+    def preprocess():
+        return
+
+    #def 
     
     def filter_by_tags(self, *args):
         ds = self.dataset

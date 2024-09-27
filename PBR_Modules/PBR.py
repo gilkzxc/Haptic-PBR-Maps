@@ -16,14 +16,41 @@ class PBR:
                 else:
                     self.tile_maps[tile] = None
         self.model_matrix = np.eye(4, dtype=np.float32)  # Identity matrix by default
-        self.view_matrix = np.eye(4, dtype=np.float32)  # Identity matrix for simplicity
-        self.projection_matrix = np.eye(4, dtype=np.float32)  # Default to identity
+        self.view_matrix = self.look_at(np.array([0.0, 2.0, 5.0], dtype=np.float32),  # Camera position
+                                        np.array([0.0, 0.0, 0.0], dtype=np.float32),  # Look at the origin
+                                        np.array([0.0, 1.0, 0.0], dtype=np.float32))  # Up vector
+        self.projection_matrix = self.perspective(np.radians(45.0), 1.0, 0.1, 100.0)  # Perspective projection
         self.texture_rotation = np.eye(4, dtype=np.float32)  # No texture rotation by default
         self.texture_repeat = (1.0, 1.0)  # Default to no repeat
+        self.camera_position = np.array([0.0, 2.0, 5.0], dtype=np.float32)  # Default camera position - slightly above and in front
+    def look_at(self, eye, target, up):
+        f = np.linalg.norm(target - eye)
+        f = (target - eye) / f
+        s = np.cross(f, up)
+        s = s / np.linalg.norm(s)
+        u = np.cross(s, f)
+        look_at_matrix = np.array([
+            [s[0], u[0], -f[0], 0],
+            [s[1], u[1], -f[1], 0],
+            [s[2], u[2], -f[2], 0],
+            [-np.dot(s, eye), -np.dot(u, eye), np.dot(f, eye), 1]
+        ], dtype=np.float32)
+        return look_at_matrix
+
+    def perspective(self, fovy, aspect, near, far):
+        f = 1.0 / np.tan(fovy / 2)
+        return np.array([
+            [f / aspect, 0, 0, 0],
+            [0, f, 0, 0],
+            [0, 0, (far + near) / (near - far), (2 * far * near) / (near - far)],
+            [0, 0, -1, 0]
+        ], dtype=np.float32)
     def set_matrices(self, model, view, projection):
         self.model_matrix = model
         self.view_matrix = view
         self.projection_matrix = projection
+    def set_camera_position(self, cp):
+        camera_position = cp
     def is_tile_maps_empty(self):
         # Returns True when tile_maps is an empty dict, or when all values are None/False.
         return self.tile_maps == {} or (not any(self.tile_maps.values()))
@@ -103,7 +130,7 @@ class PBR:
             uniform sampler2D normalMap;
             uniform sampler2D metallicMap;
             uniform sampler2D roughnessMap;
-            uniform sampler2D aoMap;
+            //uniform sampler2D aoMap;
             uniform float roughnessScale;
             // lights
             uniform vec3 lightPositions[4];
@@ -179,7 +206,9 @@ class PBR:
                 vec3 albedo     = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
                 float metallic  = texture(metallicMap, TexCoords).r;
                 float roughness = texture(roughnessMap, TexCoords).r*roughnessScale;
-                float ao        = texture(aoMap, TexCoords).r;
+                //float ao        = texture(aoMap, TexCoords).r;
+                // Assume AO is fully lit (1.0) since we don't have an AO map
+                float ao = 1.0;
 
                 vec3 N = getNormalFromMap();
                 vec3 V = normalize(cameraPosition - WorldPos);
