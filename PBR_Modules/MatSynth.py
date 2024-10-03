@@ -4,33 +4,35 @@ from torch.utils.data import DataLoader
 from PBR import PBR
 
 
-# image processing function
+# image processing function        
 def process_img(x, scale = 512):
+    if x is None:
+            return None
+    if x.mode == 'I;16':
+            x = x.convert('I')
     x = TF.resize(x, (scale, scale))
-    x = TF.to_tensor(x)
+    if x.mode == 'I':
+            x = x.convert('I;16')
     return x
 
-# item processing function
-def process_batch(examples):
-    examples["basecolor"] = [process_img(x) for x in examples["basecolor"]]
-    return examples
+# # item processing function
+# def process_batch(examples):
+#     examples["basecolor"] = [process_img(x) for x in examples["basecolor"]]
+#     return examples
 
-        
-        
 
 
 class MatSynth:
-    def __init__(self, dataset = None, is_streaming = True):
+    def __init__(self, dataset = None, local_files = None, is_streaming = True):
         # load the dataset in streaming mode
-        if dataset is None:
-            self.dataset = load_dataset("gvecchio/MatSynth", streaming = is_streaming,)
-        else:
+        if not dataset is None:
             self.dataset = dataset
+        elif not local_files is None:
+            self.dataset = load_dataset('parquet', data_files=local_files, streaming= is_streaming,)
+        else:
+            self.dataset = load_dataset("gvecchio/MatSynth", streaming = is_streaming,)
+            
      
-    def preprocess():
-        return
-
-    #def 
     
     def filter_by_tags(self, *args):
         ds = self.dataset

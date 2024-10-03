@@ -3,7 +3,31 @@ from curses import OK
 import moderngl
 from PIL import Image
 import numpy as np
+import os
 tile_maps_keys = ['basecolor','diffuse','displacement','height','metallic','normal','opeacity','roughness','specular','blend_mask']
+
+def create_context():
+    try:
+        # Attempt to create a context with standalone=True (which might rely on a display server)
+        ctx = moderngl.create_context(standalone=True)
+    except Exception as e:
+        print(f"Initial context creation failed: {e}")
+        if os.environ.get('DISPLAY') is None:
+            # If we're in a headless environment (no DISPLAY), use OSMesa
+            print("No DISPLAY found, switching to OSMesa for headless rendering.")
+            os.environ['PYOPENGL_PLATFORM'] = 'osmesa'
+            try:
+                # Try to create the context again with OSMesa
+                ctx = moderngl.create_standalone_context()
+            except Exception as e_osmesa:
+                # If even the OSMesa context creation fails, raise an error
+                raise RuntimeError(f"Failed to create OSMesa context: {e_osmesa}")
+        else:
+            # If DISPLAY exists but context creation still fails, raise an error
+            raise RuntimeError(f"Context creation failed in non-headless mode: {e}")
+    
+    return ctx
+
 
 class PBR:
     def __init__(self, render = None, tile_maps = None):
@@ -62,13 +86,7 @@ class PBR:
             return None
         
         # Initialize ModernGL context
-        ctx = moderngl.create_context(standalone=True)
-        
-        # Load tile maps
-        texture_dict = {}
-        for tile in self.tile_maps:
-            if not self.tile_maps[tile] is None:
-                texture_dict[tile] = ctx.texture((512, 512), 4, self.tile_maps[tile].tobytes())
+        ctx = create_context()
         
         # Load tile maps (assuming self.tile_maps contains PIL Image objects)
         texture_dict = {}
