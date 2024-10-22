@@ -4,7 +4,7 @@ import moderngl
 from PIL import Image
 import numpy as np
 import os
-tile_maps_keys = ['basecolor','diffuse','displacement','height','metallic','normal','opeacity','roughness','specular','blend_mask']
+tile_maps_keys = ['basecolor','diffuse','displacement','height','metallic','normal','opacity','roughness','specular','blend_mask']
 
 def create_context():
     try:
@@ -86,7 +86,13 @@ class PBR:
             return None
         
         # Initialize ModernGL context
-        ctx = create_context()
+        ctx = moderngl.create_context(
+            standalone=True,
+            backend='egl',
+            # These are OPTIONAL if you want to load a specific version
+            libgl='libGL.so.1',
+            libegl='libEGL.so.1',
+        )
         
         # Load tile maps (assuming self.tile_maps contains PIL Image objects)
         texture_dict = {}
