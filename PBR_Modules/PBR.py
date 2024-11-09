@@ -34,6 +34,7 @@ class PBR:
         self.render = render
         self.tile_maps = {}
         if isinstance(tile_maps, dict):
+            #self.tile_maps = {tile: tile_maps.get(tile, None) for tile in tile_maps_keys}
             for tile in tile_maps_keys:
                 if tile in tile_maps:
                     self.tile_maps[tile] = tile_maps[tile]
@@ -48,10 +49,8 @@ class PBR:
         self.texture_repeat = (1.0, 1.0)  # Default to no repeat
         self.camera_position = np.array([0.0, 2.0, 5.0], dtype=np.float32)  # Default camera position - slightly above and in front
     def look_at(self, eye, target, up):
-        f = np.linalg.norm(target - eye)
-        f = (target - eye) / f
-        s = np.cross(f, up)
-        s = s / np.linalg.norm(s)
+        f = (target - eye) / np.linalg.norm(target - eye)
+        s = np.cross(f, up) / np.linalg.norm(np.cross(f, up))
         u = np.cross(s, f)
         look_at_matrix = np.array([
             [s[0], u[0], -f[0], 0],
@@ -74,7 +73,7 @@ class PBR:
         self.view_matrix = view
         self.projection_matrix = projection
     def set_camera_position(self, cp):
-        camera_position = cp
+        self.camera_position = cp
     def is_tile_maps_empty(self):
         # Returns True when tile_maps is an empty dict, or when all values are None/False.
         return self.tile_maps == {} or (not any(self.tile_maps.values()))
@@ -296,7 +295,8 @@ class PBR:
 
             """
         prog = ctx.program(vertex_shader=vertex_shader, fragment_shader=fragment_shader)
-        
+        if not prog:
+            print(f"Error compiling shader: {prog}")
         # Define vertices for a cube
         vertices = np.asarray([
             # Positions          Normals             Texture Coords(u,v)
@@ -385,7 +385,7 @@ class PBR:
 
         prog['cameraPosition'].write(self.camera_position.tobytes())  # Pass camera position (3D vector)
 
-        prog['roughnessScale'].value = 1.0  # Set roughness scale
+        prog['roughnessScale'].value = 1.0  # Set roughness scale #website has 0.8
         prog['exposure'].value = 1.0  # Set exposure
 
         # Binding textures
@@ -407,4 +407,5 @@ class PBR:
         self.render = None
         return None"""
         self.render = image
+        ctx.release()
         return image
