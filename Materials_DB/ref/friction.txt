@@ -1,0 +1,163 @@
+        concrete
+		
+		
+		"Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": 0.61,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "https://mechguru.com/machine-design/typical-coefficient-of-friction-values-for-common-materials/",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": ,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+		
+		wood 
+				
+		"Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": 0.25,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "https://mechguru.com/machine-design/typical-coefficient-of-friction-values-for-common-materials/",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": 0.129,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "https://mechguru.com/machine-design/typical-coefficient-of-friction-values-for-common-materials/",
+                "citation": ""
+            }
+        },
+
+		Metal 
+				
+		"Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": 0.5,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "https://pressbooks.bccampus.ca/introductorygeneralphysics1phys1107/chapter/5-1-friction/",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": 0.3,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "https://pressbooks.bccampus.ca/introductorygeneralphysics1phys1107/chapter/5-1-friction/",
+                "citation": ""
+            }
+        },
+		
+		Leather 
+				
+		"Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": 0.61,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "https://mechguru.com/machine-design/typical-coefficient-of-friction-values-for-common-materials/",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": 0.52,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "https://mechguru.com/machine-design/typical-coefficient-of-friction-values-for-common-materials/",
+                "citation": ""
+            }
+        },
+		
+		stone 
+				
+		"Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": 0.2 - 0.4,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "https://www.engineeringtoolbox.com/friction-coefficients-d_778.html",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": ,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+		
+		fabric 
+				
+		"Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": 0.29,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "https://physics.info/friction/",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": 0.22,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "https://physics.info/friction/",
+                "citation": ""
+            }
+        },
+		
+		ceramic 
+		
+				"Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": 0.6,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "https://physics.info/friction/",
+                "citation": ""
+                "comment": "We used brick as an approximation sice there wasn't data available of wood and ceramic"
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": ,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+		
