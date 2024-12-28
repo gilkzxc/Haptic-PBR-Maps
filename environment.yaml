@@ -6,9 +6,9 @@ channels:
 dependencies:
     - python
     - pip
-    - cudatoolkit
     - numpy
     - pytorch
+    - pytorch-cuda=12.4
     - torchvision
     - configargparse
     - pip:
