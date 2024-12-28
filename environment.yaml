@@ -9,6 +9,7 @@ dependencies:
     - numpy
     - pytorch
     - pytorch-cuda=12.4
+    - cudatoolkit
     - torchvision
     - configargparse
     - pip:
