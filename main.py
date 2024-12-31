@@ -1,15 +1,16 @@
 #main
 from collections import deque
-from genericpath import isfile
+
 from PBR_Modules import MatSynth
 import ml_dms_dataset
 import PBR_Modules
 import argparse
-from os import path
+
 from glob import glob
 import questionary
 import cv2
 import os
+
 Types = ["text","image","PBR","rendered_PBR"]
 States = {"PBR":"PBR transform", "MS":"Material Segmentation", "MP":"Material Properties", "Haptic":"Haptic Transform"}
 

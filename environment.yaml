@@ -3,11 +3,13 @@ name: Haptic-PBR-Maps
 channels:
     - defaults
     - pytorch
+    - nvidia
 dependencies:
-    - python
+    - python=3.11
     - pip
     - numpy
     - pytorch
+    - pytorch-gpu
     - pytorch-cuda=12.4
     - cudatoolkit
     - torchvision
