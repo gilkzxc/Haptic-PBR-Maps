@@ -3,7 +3,9 @@ from os.path import isdir, isfile
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
-
+from glob import glob
+#from text_to_image import genImage
+#from gradio_client import Client
 
 def is_valid_url(s):
     try:
@@ -49,26 +51,40 @@ class prompt:
                 else:
                     raise ValueError(f"Prompt was recognised as URL address, but this error occured: {message}")
 
+#def fetch_prompt_from_user():
 
 
-
-        
+    
 
         
 class Task:
     def __init__(self,initial_type,prompt_input,data = None, init_state = None):
-        self.type = initial_type
+        #self.type = initial_type
+        self.prompt_text = None
+        self.prompt_image = None
+        self.children = []
+        self.material_segmentation = None
+        self.PBR = None
         try:
             self.prompt_text = prompt(prompt_input)
         except ValueError as e:
             print(f"A ValueError occurred: {e}")
         except TypeError as e:
             print(f"A TypeError occurred: {e}")
-        try:
-            self.prompt_image = load_image(self.prompt_text.value)
-        except ValueError as e:
-            print(f"A ValueError occurred: {e}")
-            self.prompt_image = None
+        if self.prompt_text:
+            if self.prompt_text.type == prompt_types[0]:
+                # Firstly we will allow only one redirection
+                list_of_file_paths = glob(f'{self.prompt_text.value}/*')
+                self.children = [Task(file_path) for file_path in list_of_file_paths if isfile(file_path)]
+            elif self.prompt_text.type == prompt_types[1]:
+                try:
+                    self.prompt_image = load_image(self.prompt_text.value)
+                except ValueError as e:
+                    print(f"A ValueError occurred: {e}")
+                    self.prompt_image = None
+            else:
+                #self.prompt_image = genImage()
+        
 
         
         
