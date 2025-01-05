@@ -145,24 +145,27 @@ def runCycle(tasks_pipe):
         if not head.is_done:
             new_pipe.append(head)
     return new_pipe
+
+
+def getPrompt():
+    prompt_type = questionary.select("Type of prompt:",choices=tasks.prompt_types).ask()
+    if prompt_type == tasks.prompt_types[0] or prompt_type == tasks.prompt_types[1]:
+        file_folder_path = questionary.path("Enter path: ").ask()
+        return tasks.Task(file_folder_path)
+    elif prompt_type == tasks.prompt_types[2]:
+        url_path = input("Enter url path: ")
+        return tasks.Task(url_path)
+    
+    # Free text
+    free_text = input("Enter text: ")
+    return tasks.Task(free_text)
         
 def main():
     print("Welcome to Haptic PBR Generator")
     run = True
     while run:
         if yes_no_question("Skip prompt?") == "No":
-            prompt_type = questionary.select("Type of prompt:",choices=tasks.prompt_types).ask()
-            if prompt_type == tasks.prompt_types[0] or prompt_type == tasks.prompt_types[1]:
-                file_folder_path = questionary.path("Enter path: ").ask()
-                new_task = tasks.Task(file_folder_path)
-            elif prompt_type == tasks.prompt_types[2]:
-                url_path = input("Enter url path: ")
-                new_task = tasks.Task(url_path)
-            else:
-                # Free text
-                free_text = input("Enter text: ")
-                new_task = tasks.Task(free_text)
-            Tasks.append(new_task)
+            Tasks.append(getPrompt())
         Tasks = runCycle(Tasks)
         run = len(Tasks) > 0
     print("Exiting Haptic PBR Generator")
