@@ -10,6 +10,8 @@ import argparse
 import questionary
 import cv2
 import os
+#from tasks import Task, prompt_types
+import tasks
 
 Types = ["text","image","PBR","rendered_PBR"]
 States = {"PBR":"PBR transform", "MS":"Material Segmentation", "MP":"Material Properties", "Haptic":"Haptic Transform"}
@@ -61,7 +63,7 @@ class Task:
             ms_
             
             
-Tasks = []
+Tasks = deque([])
 
 
 
@@ -110,7 +112,7 @@ def fetch_and_order_input():
         result = Task(initial_type="text", data=free_text, init_state=init_state)
     Tasks.append(result) 
     
-def main():
+"""def main():
     print("Welcome to Haptic PBR Generator")
     run = True
     while run:
@@ -125,9 +127,45 @@ def main():
                         
                 
             elif isinstance(task, Task):
-                if task.action(PBR_diffuser,dms_pipeline):
+                if task.action(PBR_diffuser,dms_pipeline):"""
+
+def runCycle(tasks_pipe):
+    new_pipe = deque([])
+    while len(tasks_pipe) > 0:
+        head = tasks_pipe.popleft()
+        if create_pbr_tile_maps:
+            # Run in PBR diffusers.
+            return
+        elif run_material_segmentation:
+            # Run in dms segmentation.
+            return
+        elif run_haptic_props:
+            # Run in 
+            return
+        if not head.is_done:
+            new_pipe.append(head)
+    return new_pipe
         
-        
+def main():
+    print("Welcome to Haptic PBR Generator")
+    run = True
+    while run:
+        if yes_no_question("Skip prompt?") == "No":
+            prompt_type = questionary.select("Type of prompt:",choices=tasks.prompt_types).ask()
+            if prompt_type == tasks.prompt_types[0] or prompt_type == tasks.prompt_types[1]:
+                file_folder_path = questionary.path("Enter path: ").ask()
+                new_task = tasks.Task(file_folder_path)
+            elif prompt_type == tasks.prompt_types[2]:
+                url_path = input("Enter url path: ")
+                new_task = tasks.Task(url_path)
+            else:
+                # Free text
+                free_text = input("Enter text: ")
+                new_task = tasks.Task(free_text)
+            Tasks.append(new_task)
+        Tasks = runCycle(Tasks)
+        run = len(Tasks) > 0
+    print("Exiting Haptic PBR Generator")
     
 
 if __name__ == '__main__':
