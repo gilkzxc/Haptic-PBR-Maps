@@ -1,7 +1,7 @@
 #main
 from collections import deque
 
-from PBR_Modules import MatSynth
+from PBR_Modules import MatForger, MatSynth, StableMaterials
 import ml_dms_dataset
 import PBR_Modules
 import argparse
@@ -14,7 +14,7 @@ import os
 import tasks
 
 Types = ["text","image","PBR","rendered_PBR"]
-States = {"PBR":"PBR transform", "MS":"Material Segmentation", "MP":"Material Properties", "Haptic":"Haptic Transform"}
+
 
 class Task:
     def __init__(self,initial_type,file_path,data = None, init_state = None):
@@ -129,19 +129,30 @@ def fetch_and_order_input():
             elif isinstance(task, Task):
                 if task.action(PBR_diffuser,dms_pipeline):"""
 
-def runCycle(tasks_pipe):
+def runCycle(tasks_pipe, dms_pipeline, sm_diffuser, mf_diffuser):
     new_pipe = deque([])
     while len(tasks_pipe) > 0:
         head = tasks_pipe.popleft()
         if create_pbr_tile_maps:
             # Run in PBR diffusers.
-            return
         elif run_material_segmentation:
             # Run in dms segmentation.
-            return
+
+            if head.children:
+                print("Inserting images into pipelines.")
+                for child in head.children:
+                    print(f"Child path: {child.prompt_text.value}")
+                    dms_pipeline.insert_into_infer(image_path,args.output_folder)
+                print("Begin workload...")
+                dms_pipeline.run_pipeline()
+                print("Done...")
+            else:
+                run_singleton_result = dms_pipeline.run_singleton(infered_image(image_path,output_folder_path))
+                if run_singleton_result is None:
+                    print("ERROR")
+
         elif run_haptic_props:
             # Run in 
-            return
         if not head.is_done:
             new_pipe.append(head)
     return new_pipe
@@ -163,10 +174,13 @@ def getPrompt():
 def main():
     print("Welcome to Haptic PBR Generator")
     run = True
+    dms_pipeline = ml_dms_dataset.infering_pipeline(pretrained_path)
+    sm_diffuser = StableMaterials.PBR_Diffuser()
+    mf_diffuser = MatForger.PBR_Diffuser()
     while run:
         if yes_no_question("Skip prompt?") == "No":
             Tasks.append(getPrompt())
-        Tasks = runCycle(Tasks)
+        Tasks = runCycle(Tasks, dms_pipeline, sm_diffuser, mf_diffuser)
         run = len(Tasks) > 0
     print("Exiting Haptic PBR Generator")
     

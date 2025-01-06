@@ -1,37 +1,16 @@
 #PBR class definition
-from curses import OK
+#from curses import OK
 import moderngl
 from PIL import Image
 import numpy as np
 import os
+from pyrr import Matrix44, Vector3
 tile_maps_keys = ['basecolor','diffuse','displacement','height','metallic','normal','opacity','roughness','specular','blend_mask']
-
-def create_context():
-    try:
-        # Attempt to create a context with standalone=True (which might rely on a display server)
-        ctx = moderngl.create_context(standalone=True)
-    except Exception as e:
-        print(f"Initial context creation failed: {e}")
-        if os.environ.get('DISPLAY') is None:
-            # If we're in a headless environment (no DISPLAY), use OSMesa
-            print("No DISPLAY found, switching to OSMesa for headless rendering.")
-            os.environ['PYOPENGL_PLATFORM'] = 'osmesa'
-            try:
-                # Try to create the context again with OSMesa
-                ctx = moderngl.create_standalone_context()
-            except Exception as e_osmesa:
-                # If even the OSMesa context creation fails, raise an error
-                raise RuntimeError(f"Failed to create OSMesa context: {e_osmesa}")
-        else:
-            # If DISPLAY exists but context creation still fails, raise an error
-            raise RuntimeError(f"Context creation failed in non-headless mode: {e}")
-    
-    return ctx
 
 
 class PBR:
-    def __init__(self, render = None, tile_maps = None):
-        self.render = render
+    def __init__(self, tile_maps = None):
+        self.render = None
         self.tile_maps = {}
         if isinstance(tile_maps, dict):
             #self.tile_maps = {tile: tile_maps.get(tile, None) for tile in tile_maps_keys}
@@ -40,34 +19,35 @@ class PBR:
                     self.tile_maps[tile] = tile_maps[tile]
                 else:
                     self.tile_maps[tile] = None
-        self.model_matrix = np.eye(4, dtype=np.float32)  # Identity matrix by default
-        self.view_matrix = self.look_at(np.array([0.0, 2.0, 5.0], dtype=np.float32),  # Camera position
-                                        np.array([0.0, 0.0, 0.0], dtype=np.float32),  # Look at the origin
-                                        np.array([0.0, 1.0, 0.0], dtype=np.float32))  # Up vector
-        self.projection_matrix = self.perspective(np.radians(45.0), 1.0, 0.1, 100.0)  # Perspective projection
-        self.texture_rotation = np.eye(4, dtype=np.float32)  # No texture rotation by default
-        self.texture_repeat = (1.0, 1.0)  # Default to no repeat
-        self.camera_position = np.array([0.0, 2.0, 5.0], dtype=np.float32)  # Default camera position - slightly above and in front
-    def look_at(self, eye, target, up):
-        f = (target - eye) / np.linalg.norm(target - eye)
-        s = np.cross(f, up) / np.linalg.norm(np.cross(f, up))
-        u = np.cross(s, f)
-        look_at_matrix = np.array([
-            [s[0], u[0], -f[0], 0],
-            [s[1], u[1], -f[1], 0],
-            [s[2], u[2], -f[2], 0],
-            [-np.dot(s, eye), -np.dot(u, eye), np.dot(f, eye), 1]
-        ], dtype=np.float32)
-        return look_at_matrix
+        # Define object transformations (position, rotation, scale)
+        self.model_matrix = Matrix44.from_translation(Vector3([0.0, 0.0, 0.0]))  # Model matrix (Identity by default)
 
-    def perspective(self, fovy, aspect, near, far):
-        f = 1.0 / np.tan(fovy / 2)
-        return np.array([
-            [f / aspect, 0, 0, 0],
-            [0, f, 0, 0],
-            [0, 0, (far + near) / (near - far), (2 * far * near) / (near - far)],
-            [0, 0, -1, 0]
-        ], dtype=np.float32)
+        # Define camera view matrix (look at the object)
+        eye = Vector3([0.0, 0.0, 3.0])        # Camera position
+        target = Vector3([0.0, 0.0, 0.0])     # Look-at target
+        up = Vector3([0.0, 1.0, 0.0])         # Up direction
+        self.view_matrix = Matrix44.look_at(eye, target, up)
+
+        # Normal matrix (inverse-transpose of the Model-View matrix)
+        self.model_view = self.view_matrix @ self.model_matrix
+        self.normal_matrix = np.linalg.inv(self.model_view[:3, :3]).T  # Extract the 3x3 upper-left part
+        aspect_ratio = 1
+        self.projection_matrix = Matrix44.perspective_projection(45.0, aspect_ratio, 0.1, 100.0)
+
+        # Texture rotation matrix (optional)
+        """angle = np.radians(45)  # Rotate textures 45 degrees
+        texture_rotation = np.array([
+            [np.cos(angle), -np.sin(angle), 0.0, 0.0],
+            [np.sin(angle),  np.cos(angle), 0.0, 0.0],
+            [0.0,            0.0,           1.0, 0.0],
+            [0.0,            0.0,           0.0, 1.0]
+        ], dtype='f4')"""
+        self.texture_rotation = texture_rotation = np.identity(4, dtype='f4') # No rotation (0 degrees)
+        self.texture_repeat = np.array([1, 1], dtype='f4')
+        self.camera_position = np.array([0.0, 2.0, 5.0], dtype=np.float32)  # Default camera position - slightly above and in front
+    
+
+
     def set_matrices(self, model, view, projection):
         self.model_matrix = model
         self.view_matrix = view
@@ -84,328 +64,334 @@ class PBR:
         if self.is_tile_maps_empty():
             return None
         
-        # Initialize ModernGL context
+        """# Initialize ModernGL context
         ctx = moderngl.create_context(
             standalone=True,
             backend='egl',
             # These are OPTIONAL if you want to load a specific version
             libgl='libGL.so.1',
             libegl='libEGL.so.1',
-        )
-        
-        # Load tile maps (assuming self.tile_maps contains PIL Image objects)
-        texture_dict = {}
-        for key in tile_maps_keys:
-            if self.tile_maps.get(key) is not None:
-                # Convert PIL Image to bytes and then create texture
-                image = self.tile_maps[key]
-                texture_dict[key] = ctx.texture(image.size, 4, image.tobytes())
-            else:
-                # If the texture is missing, create a default grey texture
-                texture_dict[key] = ctx.texture((1, 1), 4, np.ones((1, 1, 4), dtype=np.uint8).tobytes()) # Should fit into right size?
+        )"""
+        # Headless ModernGL context
+        ctx = moderngl.create_standalone_context()
 
-            # Bind texture to a texture unit
-            texture_dict[key].use(location=tile_maps_keys.index(key))
+        # Load textures
+        basecolor_img = self.tile_maps["basecolor"]  # RGB
+        normal_img = self.tile_maps["normal"]  # RGBA
+        roughness_img = self.tile_maps["roughness"].convert('L')  # Grayscale
+        metallic_img = self.tile_maps["metallic"].convert('L')  # Grayscale
+        height_img = self.tile_maps["height"].convert('L')  # Grayscale
 
+        basecolor = ctx.texture(basecolor_img.size, 3, basecolor_img.tobytes())
+        normalmap = ctx.texture(normal_img.size, 4, normal_img.tobytes())
+        roughnessmap = ctx.texture(roughness_img.size, 1, roughness_img.tobytes())  # Single channel
+        metallicmap = ctx.texture(metallic_img.size, 1, metallic_img.tobytes())  # Single channel
+        #heightmap = ctx.texture(height_img.size, 1, height_img.tobytes(), dtype = 'f2')  # Single channel - for 16bit map
+        heightmap = ctx.texture(height_img.size, 1, height_img.tobytes())  # Testing is done with a bigger than 16bit.
+
+        basecolor.use(location=0)
+        normalmap.use(location=1)
+        roughnessmap.use(location=2)
+        metallicmap.use(location=3)
+        heightmap.use(location=4)
         #Shader Program         #Need to learn more on shader making.
         #Vertex and Fragment shader - @Credit Jon Macey
         # Based on PBR lectures from https://nccastaff.bournemouth.ac.uk/jmacey/
-        vertex_shader = """
-        #version 330
-            // Based on https://learnopengl.com/PBR/Theory
-            // textures from https://freepbr.com/
-            precision highp float;
-            uniform mat4 modelMatrix;
-            uniform mat4 modelViewMatrix;
-            uniform mat4 projectionMatrix;
-            uniform mat3 normalMatrix;
-            uniform mat4 textureRotation;
-            uniform vec2 textureRepeat;
-            in vec3 position;
-            in vec3 normal;
-            in vec2 uv;
+        vertex_shader = '''
+        #version 300 es
+        // Based on https://learnopengl.com/PBR/Theory
+        // textures from https://freepbr.com/
+        precision highp float;
+        uniform mat4 modelMatrix;
+        uniform mat4 modelViewMatrix;
+        uniform mat4 projectionMatrix;
+        uniform mat3 normalMatrix;
+        uniform mat4 textureRotation;
+        uniform vec2 textureRepeat;
+        in vec3 position;
+        in vec3 normal;
+        in vec2 uv;
 
-            out vec2 TexCoords;
-            out vec3 WorldPos;
-            out vec3 Normal;
+        out vec2 TexCoords;
+        out vec3 WorldPos;
+        out vec3 Normal;
 
-            void main()
-            {
-              WorldPos = vec3(modelMatrix * vec4(position, 1.0f));
-              Normal=normalMatrix*normal;
-              TexCoords=mat2(textureRotation)*(uv*textureRepeat);  
-              gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-            }
-        """
-        fragment_shader = """
-            #version 330 core
-            precision highp float;
-            // Based on https://learnopengl.com/PBR/Theory
-            // textures from https://freepbr.com/
-            in vec2 TexCoords;
-            in vec3 WorldPos;
-            in vec3 Normal;
+        void main()
+        {
+          WorldPos = vec3(modelMatrix * vec4(position, 1.0f));
+          Normal=normalMatrix*normal;
+          TexCoords=mat2(textureRotation)*(uv*textureRepeat);  
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+        }
 
-            layout (location =0) out vec4 fragColour;
+        '''
+        fragment_shader = '''
+        #version 300 es
+        precision highp float;
 
-            // material parameters
-            uniform sampler2D albedoMap;
-            uniform sampler2D normalMap;
-            uniform sampler2D metallicMap;
-            uniform sampler2D roughnessMap;
-            //uniform sampler2D aoMap;
-            uniform float roughnessScale;
-            // lights
-            uniform vec3 lightPositions[4];
-            uniform vec3 lightColors[4];
-            uniform float exposure;
-            uniform vec3 cameraPosition;
+        in vec2 TexCoords;
+        in vec3 WorldPos;
+        in vec3 Normal;
 
-            const float PI = 3.14159265359;
-            // ----------------------------------------------------------------------------
-            // Easy trick to get tangent-normals to world-space to keep PBR code simplified.
-            // Don't worry if you don't get what's going on; you generally want to do normal
-            // mapping the usual way for performance anways; I do plan make a note of this
-            // technique somewhere later in the normal mapping tutorial.
-            vec3 getNormalFromMap()
-            {
-                vec3 tangentNormal = texture(normalMap, TexCoords).xyz * 2.0 - 1.0;
+        layout (location = 0) out vec4 fragColour;
 
-                vec3 Q1  = dFdx(WorldPos);
-                vec3 Q2  = dFdy(WorldPos);
-                vec2 st1 = dFdx(TexCoords);
-                vec2 st2 = dFdy(TexCoords);
+        // Material parameters
+        uniform sampler2D albedoMap;
+        uniform sampler2D normalMap;
+        uniform sampler2D metallicMap;
+        uniform sampler2D roughnessMap;
+        uniform sampler2D heightMap;  // New height map
+        uniform float heightScale;    // Height map scaling factor
+        uniform float roughnessScale;
 
-                vec3 N   = normalize(Normal);
-                vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
-                vec3 B  = -normalize(cross(N, T));
-                mat3 TBN = mat3(T, B, N);
+        // Lights
+        uniform vec3 lightPositions[4];
+        uniform vec3 lightColors[4];
+        uniform float exposure;
+        uniform vec3 cameraPosition;
 
-                return normalize(TBN * tangentNormal);
-            }
-            // ----------------------------------------------------------------------------
-            float DistributionGGX(vec3 N, vec3 H, float roughness)
-            {
-                float a = roughness*roughness;
-                float a2 = a*a;
-                float NdotH = max(dot(N, H), 0.0);
-                float NdotH2 = NdotH*NdotH;
+        const float PI = 3.14159265359;
 
-                float nom   = a2;
-                float denom = (NdotH2 * (a2 - 1.0) + 1.0);
-                denom = PI * denom * denom;
+        // Parallax Mapping
+        vec2 parallaxMapping(vec2 texCoords, vec3 viewDir) {
+            // Parallax mapping with linear interpolation for smoother results
+            const int numLayers = 10; // Reduce iterations for performance
+            float layerDepth = 1.0 / float(numLayers);
+            float currentLayerDepth = 0.0;
 
-                return nom / denom;
-            }
-            // ----------------------------------------------------------------------------
-            float GeometrySchlickGGX(float NdotV, float roughness)
-            {
-                float r = (roughness + 1.0);
-                float k = (r*r) / 8.0;
+            vec2 deltaTexCoords = normalize(viewDir.xy) * heightScale / float(numLayers);
+            vec2 currentTexCoords = texCoords;
 
-                float nom   = NdotV;
-                float denom = NdotV * (1.0 - k) + k;
+            float currentHeight = texture(heightMap, currentTexCoords).r;
 
-                return nom / denom;
-            }
-            // ----------------------------------------------------------------------------
-            float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
-            {
-                float NdotV = max(dot(N, V), 0.0);
-                float NdotL = max(dot(N, L), 0.0);
-                float ggx2 = GeometrySchlickGGX(NdotV, roughness);
-                float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+            for (int i = 0; i < numLayers; i++) {
+                currentLayerDepth += layerDepth;
+                currentTexCoords -= deltaTexCoords;
+                float sampledHeight = texture(heightMap, currentTexCoords).r;
 
-                return ggx1 * ggx2;
-            }
-            // ----------------------------------------------------------------------------
-            vec3 fresnelSchlick(float cosTheta, vec3 F0)
-            {
-                return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
-            }
-            // ----------------------------------------------------------------------------
-            void main()
-            {
-                vec3 albedo     = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));
-                float metallic  = texture(metallicMap, TexCoords).r;
-                float roughness = texture(roughnessMap, TexCoords).r*roughnessScale;
-                //float ao        = texture(aoMap, TexCoords).r;
-                // Assume AO is fully lit (1.0) since we don't have an AO map
-                float ao = 1.0;
+                // If we've passed the height, interpolate between layers
+                if (currentLayerDepth >= sampledHeight) {
+                    vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
+                    float prevHeight = texture(heightMap, prevTexCoords).r;
 
-                vec3 N = getNormalFromMap();
-                vec3 V = normalize(cameraPosition - WorldPos);
-
-                // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
-                // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
-                vec3 F0 = vec3(0.04);
-                F0 = mix(F0, albedo, metallic);
-
-                // reflectance equation
-                vec3 Lo = vec3(0.0);
-                for(int i = 0; i < 4; ++i)
-                {
-                    // calculate per-light radiance
-                    vec3 L = normalize(lightPositions[i] - WorldPos);
-                    vec3 H = normalize(V + L);
-                    float distance = length(lightPositions[i] - WorldPos);
-                    float attenuation = 1.0 / (distance * distance);
-                    vec3 radiance = lightColors[i] * attenuation;
-
-                    // Cook-Torrance BRDF
-                    float NDF = DistributionGGX(N, H, roughness);
-                    float G   = GeometrySmith(N, V, L, roughness);
-                    vec3 F    = fresnelSchlick(max(dot(H, V), 0.0), F0);
-
-                    vec3 nominator    = NDF * G * F;
-                    float denominator = 4.0 * max(dot(N, V), 0.0) * max(dot(N, L), 0.0) + 0.001; // 0.001 to prevent divide by zero.
-                    vec3 specular = nominator / denominator;
-
-                    // kS is equal to Fresnel
-                    vec3 kS = F;
-                    // for energy conservation, the diffuse and specular light can't
-                    // be above 1.0 (unless the surface emits light); to preserve this
-                    // relationship the diffuse component (kD) should equal 1.0 - kS.
-                    vec3 kD = vec3(1.0) - kS;
-                    // multiply kD by the inverse metalness such that only non-metals
-                    // have diffuse lighting, or a linear blend if partly metal (pure metals
-                    // have no diffuse light).
-                    kD *= 1.0 - metallic;
-
-                    // scale light by NdotL
-                    float NdotL = max(dot(N, L), 0.0);
-
-                    // add to outgoing radiance Lo
-                    Lo += (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
+                    float weight = (currentLayerDepth - sampledHeight) / (currentLayerDepth - prevHeight);
+                    return mix(currentTexCoords, prevTexCoords, weight);
                 }
-
-                // ambient lighting (note that the next IBL tutorial will replace
-                // this ambient lighting with environment lighting).
-                vec3 ambient = vec3(0.03) * albedo * ao;
-
-                vec3 color = ambient + Lo;
-
-                // HDR tonemapping
-                color = color / (color + vec3(1.0));
-                // gamma correct
-                color = pow(color, vec3(1.0/exposure));
-
-                fragColour = vec4(color, 1.0);
             }
 
-            """
+            return texCoords; // Default to base coordinates if no match
+        }
+
+
+        // Normal Mapping
+        vec3 getNormalFromMap() {
+            vec3 tangentNormal = texture(normalMap, TexCoords).xyz * 2.0 - 1.0;
+
+            vec3 Q1  = dFdx(WorldPos);
+            vec3 Q2  = dFdy(WorldPos);
+            vec2 st1 = dFdx(TexCoords);
+            vec2 st2 = dFdy(TexCoords);
+
+            vec3 N   = normalize(Normal);
+            vec3 T  = normalize(Q1 * st2.t - Q2 * st1.t);
+            vec3 B  = -normalize(cross(N, T));
+            mat3 TBN = mat3(T, B, N);
+
+            return normalize(TBN * tangentNormal);
+        }
+
+        float DistributionGGX(vec3 N, vec3 H, float roughness) {
+            float a = roughness * roughness;
+            float a2 = a * a;
+            float NdotH = max(dot(N, H), 0.0);
+            float NdotH2 = NdotH * NdotH;
+
+            float nom   = a2;
+            float denom = (NdotH2 * (a2 - 1.0) + 1.0);
+            denom = PI * denom * denom;
+
+            return nom / denom;
+        }
+
+        float GeometrySchlickGGX(float NdotV, float roughness) {
+            float r = (roughness + 1.0);
+            float k = (r * r) / 8.0;
+
+            float nom   = NdotV;
+            float denom = NdotV * (1.0 - k) + k;
+
+            return nom / denom;
+        }
+
+        float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
+            float NdotV = max(dot(N, V), 0.0);
+            float NdotL = max(dot(N, L), 0.0);
+            float ggx2 = GeometrySchlickGGX(NdotV, roughness);
+            float ggx1 = GeometrySchlickGGX(NdotL, roughness);
+
+            return ggx1 * ggx2;
+        }
+
+        vec3 fresnelSchlick(float cosTheta, vec3 F0) {
+            return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+        }
+
+        void main() {
+            vec3 viewDir = normalize(cameraPosition - WorldPos);
+    
+
+            // Adjusted texture coordinates with parallax mapping
+            vec2 parallaxTexCoords = parallaxMapping(TexCoords, viewDir);
+            //vec2 parallaxTexCoords = TexCoords;
+
+            // Material properties
+            vec3 albedo = pow(texture(albedoMap, parallaxTexCoords).rgb, vec3(2.2));
+            //vec3 albedo = texture(albedoMap, parallaxTexCoords).rgb;
+            float metallic = texture(metallicMap, parallaxTexCoords).r;
+            float roughness = texture(roughnessMap, parallaxTexCoords).r * roughnessScale;
+            vec3 N = getNormalFromMap();
+
+
+            // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0
+            // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)
+            vec3 F0 = vec3(0.04);
+            F0 = mix(F0, albedo, metallic);
+
+            // Reflectance equation
+            vec3 Lo = vec3(0.0);
+            for (int i = 0; i < 4; ++i) {
+                // calculate per-light radiance
+                vec3 L = normalize(lightPositions[i] - WorldPos);
+                vec3 H = normalize(viewDir + L);
+                float distance = length(lightPositions[i] - WorldPos);
+                float attenuation = 1.0 / (distance * distance);
+                vec3 radiance = lightColors[i] * attenuation;
+
+                // Cook-Torrance BRDF
+                float NDF = DistributionGGX(N, H, roughness);
+                float G = GeometrySmith(N, viewDir, L, roughness);
+                vec3 F = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);
+
+                // kS is equal to Fresnel
+                vec3 kS = F;
+                // for energy conservation, the diffuse and specular light can't
+                // be above 1.0 (unless the surface emits light); to preserve this
+                // relationship the diffuse component (kD) should equal 1.0 - kS.
+                vec3 kD = vec3(1.0) - kS;
+                // multiply kD by the inverse metalness such that only non-metals
+                // have diffuse lighting, or a linear blend if partly metal (pure metals
+                // have no diffuse light).
+                kD *= 1.0 - metallic;
+
+                // scale light by NdotL
+                float NdotL = max(dot(N, L), 0.0);
+
+                vec3 specular = (NDF * G * F) / (4.0 * max(dot(N, viewDir), 0.0) * NdotL + 0.001);
+                Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+            }
+
+            vec3 ambient = vec3(0.03) * albedo;  // Simple ambient light
+            vec3 color = ambient + Lo;
+
+            // HDR tonemapping
+            color = color / (color + vec3(1.0));
+            // gamma correct
+            color = pow(color, vec3(1.0/exposure));
+
+            fragColour = vec4(color, 1.0);
+            //fragColour = vec4(albedo, 1.0);
+            //fragColour = vec4(N * 0.5 + 0.5, 1.0);
+            //fragColour = vec4(Lo, 1.0);
+        }
+
+        '''
+        # Compile shader program
         prog = ctx.program(vertex_shader=vertex_shader, fragment_shader=fragment_shader)
         if not prog:
             print(f"Error compiling shader: {prog}")
         # Define vertices for a cube
-        vertices = np.asarray([
-            # Positions          Normals             Texture Coords(u,v)
-            # Back face
-            -1.0, -1.0, -1.0,    0.0,  0.0, -1.0,    0.0, 0.0,
-             1.0, -1.0, -1.0,    0.0,  0.0, -1.0,    1.0, 0.0,
-             1.0,  1.0, -1.0,    0.0,  0.0, -1.0,    1.0, 1.0,
-             1.0,  1.0, -1.0,    0.0,  0.0, -1.0,    1.0, 1.0,
-            -1.0,  1.0, -1.0,    0.0,  0.0, -1.0,    0.0, 1.0,
-            -1.0, -1.0, -1.0,    0.0,  0.0, -1.0,    0.0, 0.0,
-
-            # Front face
-            -1.0, -1.0,  1.0,    0.0,  0.0,  1.0,    0.0, 0.0,
-             1.0, -1.0,  1.0,    0.0,  0.0,  1.0,    1.0, 0.0,
-             1.0,  1.0,  1.0,    0.0,  0.0,  1.0,    1.0, 1.0,
-             1.0,  1.0,  1.0,    0.0,  0.0,  1.0,    1.0, 1.0,
-            -1.0,  1.0,  1.0,    0.0,  0.0,  1.0,    0.0, 1.0,
-            -1.0, -1.0,  1.0,    0.0,  0.0,  1.0,    0.0, 0.0,
-
-            # Left face
-            -1.0,  1.0,  1.0,   -1.0,  0.0,  0.0,    1.0, 0.0,
-            -1.0,  1.0, -1.0,   -1.0,  0.0,  0.0,    1.0, 1.0,
-            -1.0, -1.0, -1.0,   -1.0,  0.0,  0.0,    0.0, 1.0,
-            -1.0, -1.0, -1.0,   -1.0,  0.0,  0.0,    0.0, 1.0,
-            -1.0, -1.0,  1.0,   -1.0,  0.0,  0.0,    0.0, 0.0,
-            -1.0,  1.0,  1.0,   -1.0,  0.0,  0.0,    1.0, 0.0,
-
-            # Right face
-             1.0,  1.0,  1.0,    1.0,  0.0,  0.0,    1.0, 0.0,
-             1.0,  1.0, -1.0,    1.0,  0.0,  0.0,    1.0, 1.0,
-             1.0, -1.0, -1.0,    1.0,  0.0,  0.0,    0.0, 1.0,
-             1.0, -1.0, -1.0,    1.0,  0.0,  0.0,    0.0, 1.0,
-             1.0, -1.0,  1.0,    1.0,  0.0,  0.0,    0.0, 0.0,
-             1.0,  1.0,  1.0,    1.0,  0.0,  0.0,    1.0, 0.0,
-
-            # Bottom face
-            -1.0, -1.0, -1.0,    0.0, -1.0,  0.0,    0.0, 0.0,
-             1.0, -1.0, -1.0,    0.0, -1.0,  0.0,    1.0, 0.0,
-             1.0, -1.0,  1.0,    0.0, -1.0,  0.0,    1.0, 1.0,
-             1.0, -1.0,  1.0,    0.0, -1.0,  0.0,    1.0, 1.0,
-            -1.0, -1.0,  1.0,    0.0, -1.0,  0.0,    0.0, 1.0,
-            -1.0, -1.0, -1.0,    0.0, -1.0,  0.0,    0.0, 0.0,
-
-            # Top face
-            -1.0,  1.0, -1.0,    0.0,  1.0,  0.0,    0.0, 0.0,
-             1.0,  1.0, -1.0,    0.0,  1.0,  0.0,    1.0, 0.0,
-             1.0,  1.0,  1.0,    0.0,  1.0,  0.0,    1.0, 1.0,
-             1.0,  1.0,  1.0,    0.0,  1.0,  0.0,    1.0, 1.0,
-            -1.0,  1.0,  1.0,    0.0,  1.0,  0.0,    0.0, 1.0,
-            -1.0,  1.0, -1.0,    0.0,  1.0,  0.0,    0.0, 0.0
+        vertex_data = np.array([
+            # Positions          Normals         UVs
+            -1.0, -1.0, 0.0,    0.0, 0.0, 1.0,    0.0, 0.0,
+             1.0, -1.0, 0.0,    0.0, 0.0, 1.0,    1.0, 0.0,
+            -1.0,  1.0, 0.0,    0.0, 0.0, 1.0,    0.0, 1.0,
+             1.0,  1.0, 0.0,    0.0, 0.0, 1.0,    1.0, 1.0,
         ], dtype='f4')
 
-        vbo = ctx.buffer(vertices.tobytes())
-        
-        # Set matrices and other uniforms
-        prog['modelMatrix'].write(self.model_matrix.tobytes())
-        model_view_matrix = np.dot(self.view_matrix, self.model_matrix)
-        prog['modelViewMatrix'].write(model_view_matrix.tobytes())
-        prog['projectionMatrix'].write(self.projection_matrix.tobytes())
-        
-        # Normal matrix is the inverse transpose of the upper-left 3x3 submatrix
-        normal_matrix = np.linalg.inv(model_view_matrix[:3, :3]).T
-        prog['normalMatrix'].write(normal_matrix.tobytes())
-
+        # Create buffer
+        vbo = ctx.buffer(vertex_data.tobytes())
+        vao = ctx.vertex_array(prog,[(vbo, '3f 3f 2f', 'position', 'normal', 'uv')],)
         
         # Texture repeat and rotation
         prog['textureRotation'].write(self.texture_rotation.tobytes())
         prog['textureRepeat'].value = self.texture_repeat
 
-        light_positions = np.array([
-            [10.0, 10.0, 10.0],
-            [0.0, 10.0, 0.0],
-            [-10.0, -10.0, 10.0],
-            [10.0, -10.0, 0.0]
-        ], dtype='f4')
+        # Shader program uniforms
+        prog['modelMatrix'].write(self.model_matrix.astype('f4').tobytes())
+        prog['modelViewMatrix'].write(self.model_view.astype('f4').tobytes())
+        prog['projectionMatrix'].write(self.projection_matrix.astype('f4').tobytes())
+        prog['normalMatrix'].write(self.normal_matrix.astype('f4').tobytes())
+        prog['textureRotation'].write(self.texture_rotation.astype('f4').tobytes())
+        prog['textureRepeat'].write(self.texture_repeat.tobytes())
+        prog['roughnessScale'].value = 0.8
+        prog['exposure'].value = 2.2
+        #prog['heightScale'].value = 0.01  # Adjust this value for subtle parallax effect
+        prog['heightScale'].value = 0.002
 
-        light_colors = np.array([
-            [300.0, 300.0, 300.0],
-            [300.0, 0.0, 0.0],
-            [0.0, 300.0, 0.0],
-            [0.0, 0.0, 300.0]
-        ], dtype='f4')
+        # Light positions and intensities
+        """light_positions = [
+            [0.0, 2.0, 2.0],  # Light 1
+            [-2.0, 2.0, 2.0],  # Light 2
+            [2.0, 2.0, -2.0],  # Light 3
+            [0.0, 2.0, -2.0]   # Light 4
+        ]
+        light_colors = [
+            [300.0, 300.0, 300.0],  # Light 1 Power
+            [300.0, 300.0, 300.0],  # Light 2 Power
+            [300.0, 300.0, 300.0],  # Light 3 Power
+            [300.0, 300.0, 300.0]   # Light 4 Power
+        ]"""
+        light_positions = [
+            [2.0, 2.0, 2.0],   # Light 1
+            [-2.0, 2.0, 2.0],  # Light 2
+            [2.0, -2.0, 2.0],  # Light 3
+            [2.0, 2.0, -2.0]   # Light 4
+        ]
+        """light_colors = [
+            [150.0, 150.0, 150.0],  # Light 1 Power
+            [150.0, 150.0, 150.0],  # Light 2 Power
+            [150.0, 150.0, 150.0],  # Light 3 Power
+            [150.0, 150.0, 150.0]   # Light 4 Power
+        ]"""
+        """light_colors = [
+            [50.0, 50.0, 50.0],
+            [50.0, 50.0, 50.0],
+            [50.0, 50.0, 50.0],
+            [50.0, 50.0, 50.0]
+        ]"""
+        light_colors = [
+            [10., 10., 10.],
+            [10., 10., 10.],
+            [10., 10., 10.],
+            [10., 10., 10.]
+        ]
 
-        prog['lightPositions'].write(light_positions.tobytes())  # Pass light positions
-        prog['lightColors'].write(light_colors.tobytes())  # Pass light colors
 
-        prog['cameraPosition'].write(self.camera_position.tobytes())  # Pass camera position (3D vector)
+        prog['lightPositions'].write(np.array(light_positions, dtype='f4').tobytes())
+        prog['lightColors'].write(np.array(light_colors, dtype='f4').tobytes())
 
-        prog['roughnessScale'].value = 1.0  # Set roughness scale #website has 0.8
-        prog['exposure'].value = 1.0  # Set exposure
 
-        # Binding textures
-        texture_dict['basecolor'].use(0)  # Albedo
-        texture_dict['normal'].use(1)     # Normal
-        texture_dict['metallic'].use(2)   # Metallic
-        texture_dict['roughness'].use(3)  # Roughness
-
-        vao = ctx.vertex_array(prog, vbo, "position", "normal", "uv")
-        fbo = ctx.framebuffer(color_attachments=[ctx.texture((512, 512), 3)])
+        # Create framebuffer for offscreen rendering
+        fbo = ctx.framebuffer(
+            color_attachments=[ctx.texture((512, 512), 3)],
+        )
         fbo.use()
-        fbo.clear(0.0, 0.0, 0.0, 1.0)
-        vao.render()
-        image = Image.frombytes("RGB",fbo.size, fbo.color_attachments[0].read(),"raw", "RGB", 0, -1) #PIL Image Object.
-        #result = #image in the wanted format either PIL or numpy array.
-        """if result_ok:
-            self.render = result
-            return result
-        self.render = None
-        return None"""
+        ctx.clear(0.1, 0.1, 0.1)
+        vao.render(moderngl.TRIANGLE_STRIP)
+
+        data = fbo.read(components=3)
+        image = Image.frombytes('RGB', fbo.size, data)
+        image = image.transpose(Image.FLIP_TOP_BOTTOM)  # Flip because OpenGL origin is bottom-left
         self.render = image
         ctx.release()
         return image

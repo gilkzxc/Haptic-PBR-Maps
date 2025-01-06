@@ -67,11 +67,11 @@ class prompt:
                 else:
                     raise ValueError(f"Prompt was recognised as URL address, but this error occured: {message}")
 
-#def fetch_prompt_from_user():
+
 
 
     
-
+States = {"PBR":"PBR transform", "MS":"Material Segmentation", "MP":"Material Properties", "Haptic":"Haptic Transform"}
         
 class Task:
     def __init__(self,prompt_input, init_state = None):
@@ -81,7 +81,7 @@ class Task:
         self.children = []
         self.material_segmentation = None
         self.PBR = None
-        self.state = init_state
+        self.nextState = init_state
         try:
             self.prompt_text = prompt(prompt_input)
         except ValueError as e:
@@ -97,13 +97,15 @@ class Task:
             elif self.prompt_text.type == prompt_types[1] or self.prompt_text.type == prompt_types[2]:
                 # Prompt is file path or url.
                 try:
-                    self.prompt_image = load_image(self.prompt_text.value)
+                    image = load_image(self.prompt_text.value)
+                    self.prompt_image = image_file_path
                 except ValueError as e:
                     print(f"A ValueError occurred: {e}")
                     self.prompt_image = None
             else:
                 # Prompt is free text. So we will generate an image.
-                self.prompt_image = load_image(genImage(self.prompt_text.value))
+                image = load_image(genImage(self.prompt_text.value))
+                self.prompt_image = image_file_path
         
 
         
