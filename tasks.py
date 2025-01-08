@@ -72,12 +72,11 @@ class prompt:
 
 
 
+States = ["PBR transform","Material Segmentation","Material Properties","Haptic Transform"]
 
-    
-States = {"PBR":"PBR transform", "MS":"Material Segmentation", "MP":"Material Properties", "Haptic":"Haptic Transform"}
         
 class Task:
-    def __init__(self, prompt_input, output_parent_dir = "./", init_state = None):
+    def __init__(self, prompt_input, output_parent_dir = "./", init_state = 0):
         #self.type = initial_type
         self.prompt_text = None
         self.prompt_image = None
@@ -128,6 +127,37 @@ class Task:
             print(f'Folder {self.output_dir} and its content removed') # Folder and its content removed
         except:
             print(f'Folder {self.output_dir} not deleted')
+    def to_material_segmentation(self,dms_pipeline):
+        print(f"Prompt: {self.prompt_text.value} , begins Material Segmentation.")
+        if self.isTaskDir():
+            if self.children:
+                print(f"Begin children uploading to pipeline.")
+                for child in self.children:
+                    print(f"Child path: {child.prompt_text.value}")
+                    if child.isTaskImage() or child.isTaskFreeText():
+                        dms_pipeline.insert_into_infer(child.prompt_image["path"],f"{child.output_dir}/dms")
+                    else:
+                        print("Error in child. Deleting parent and it's children output.")
+                        return False
+                print("Begin workload...")
+                if dms_pipeline.run_pipeline():
+                    print("Passing workload to children")
+                    for child_index in range(len(self.children)):
+                        self.children[child_index] = dms_pipeline.pipeline_infered.popleft()
+                    print("Done...")
+                    return True
+                return False
+            else:
+                print(f"{self.prompt_text.value} is an empty directory.")
+                return False
+        elif self.isTaskImage() or self.isTaskFreeText():
+            run_singleton_result = dms_pipeline.run_singleton(self.prompt_image["path"],f"{self.output_dir}/dms")
+            if run_singleton_result is None:
+                print(f"ERROR: {self.prompt_text.value} singleton run failed.")
+                return False
+            self.material_segmentation = run_singleton_result
+            print("Done...")
+            return True
         
 
         

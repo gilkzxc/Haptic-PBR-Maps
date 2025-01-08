@@ -170,10 +170,12 @@ class infering_pipeline:
         self.pipeline_infered = deque([])
     def insert_into_infer(self, image_path, output_folder_path):
         self.pipeline_to_infer.append(infered_image(image_path,output_folder_path))
-    def run_singleton(self, infered_image_obj): #Runs single material segmentation task
-        """if isinstance(infered_image_obj, str) and isfile(infered_image_obj):
-            infered_image_obj = infered_image(infered_image_obj)"""
-        if not isinstance(infered_image_obj, infered_image):
+    def run_singleton(self, *args): #Runs single material segmentation task
+        if len(args) == 2 and isinstance(args[0],str) and isinstance(args[1],str):
+            infered_image_obj = infered_image(*args)
+        elif len(args) == 1 and isinstance(args[0], infered_image):
+            infered_image_obj = args[0]
+        else:
             return None
         #os.makedirs(self.output_folder_path, exist_ok=True)
         result = {}
@@ -192,9 +194,11 @@ class infering_pipeline:
             head = self.pipeline_to_infer.popleft()
             run_singleton_result = self.run_singleton(head)
             if run_singleton_result is None:
-                print("ERROR")
-            self.pipeline_infered.append(run_singleton_result["object"])
+                print("ERROR in DMS PIPELINE")
+                return False
+            self.pipeline_infered.append(run_singleton_result)
             print(f"Number of images left to infer: {len(self.pipeline_to_infer)}")
+        return True
     
             
 if __name__ == '__main__':
