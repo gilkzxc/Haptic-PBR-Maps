@@ -137,17 +137,29 @@ def runCycle(tasks_pipe, dms_pipeline, sm_diffuser, mf_diffuser):
             # Run in PBR diffusers.
         elif run_material_segmentation:
             # Run in dms segmentation.
-
-            if head.children:
-                print("Inserting images into pipelines.")
-                for child in head.children:
-                    print(f"Child path: {child.prompt_text.value}")
-                    dms_pipeline.insert_into_infer(image_path,args.output_folder)
-                print("Begin workload...")
-                dms_pipeline.run_pipeline()
-                print("Done...")
-            else:
-                run_singleton_result = dms_pipeline.run_singleton(infered_image(image_path,output_folder_path))
+            print(f"Prompt: {head.prompt_text.value} , begins Material Segmentation.")
+            if head.isTaskDir():
+                if head.children:
+                    print(f"Begin children uploading to pipeline.")
+                    error_for = False
+                    for child in head.children:
+                        print(f"Child path: {child.prompt_text.value}")
+                        if child.isTaskImage() or child.isTaskFreeText():
+                            dms_pipeline.insert_into_infer(child.prompt_image["path"],f"{child.output_dir}/dms")
+                        else:
+                            print("Error in child. Deleting parent and it's children output.")
+                            error_for = True
+                            break
+                    if error_for:
+                        head.deleteOutput()
+                        continue
+                    print("Begin workload...")
+                    dms_pipeline.run_pipeline()
+                    print("Done...")
+                else:
+                    print(f"{head.prompt_text.value} is an empty directory.")
+            elif head.isTaskImage() or head.isTaskFreeText():
+                run_singleton_result = dms_pipeline.run_singleton(ml_dms_dataset.infered_image(head.prompt_image["path"],f"{head.output_dir}/dms"))
                 if run_singleton_result is None:
                     print("ERROR")
 
@@ -171,12 +183,13 @@ def getPrompt():
     free_text = input("Enter text: ")
     return tasks.Task(free_text)
         
-def main():
+def main(args):
     print("Welcome to Haptic PBR Generator")
     run = True
-    dms_pipeline = ml_dms_dataset.infering_pipeline(pretrained_path)
+    dms_pipeline = ml_dms_dataset.infering_pipeline(args.pretrained_dms_path)
     sm_diffuser = StableMaterials.PBR_Diffuser()
     mf_diffuser = MatForger.PBR_Diffuser()
+    os.makedirs(args.output_folder, exist_ok=True)
     while run:
         if yes_no_question("Skip prompt?") == "No":
             Tasks.append(getPrompt())
@@ -186,4 +199,29 @@ def main():
     
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(prog='Haptic-PBR-Maps Generator', description='Utilize material segmentation with PBR diffusers to create Haptic PBR Maps.')
+    parser.add_argument(
+        '--pretrained_dms_path',
+        type=str,
+        default='./ml_dms_datatset/DMS46_v1.pt',
+        help='path to the pretrained model of DMS',
+    )
+    parser.add_argument(
+        '--output_folder',
+        type=str,
+        default='./output/',
+        help='path to output folder',
+    )
+    parser.add_argument(
+        '--output_folder',
+        type=str,
+        default='./output/',
+        help='path to output folder',
+    )
+    """parser.add_argument(
+        '--consistent',
+        type=str,
+        default='./output/',
+        help='Run Consistent StableMaterial',
+    )"""
+    main(parser.parse_args())

@@ -1,11 +1,14 @@
 from diffusers.utils import load_image
-from os.path import isdir, isfile
+from os.path import isdir, isfile, basename, dirname
+from os import makedirs
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 from urllib.error import URLError, HTTPError
 from glob import glob
 #from text_to_image import genImage
 from gradio_client import Client
+from shutil import rmtree
+
 
 def is_valid_url(s):
     try:
@@ -74,16 +77,20 @@ class prompt:
 States = {"PBR":"PBR transform", "MS":"Material Segmentation", "MP":"Material Properties", "Haptic":"Haptic Transform"}
         
 class Task:
-    def __init__(self,prompt_input, init_state = None):
+    def __init__(self, prompt_input, output_parent_dir = "./", init_state = None):
         #self.type = initial_type
         self.prompt_text = None
         self.prompt_image = None
+        self.output_parent_dir = output_parent_dir
         self.children = []
         self.material_segmentation = None
         self.PBR = None
         self.nextState = init_state
         try:
             self.prompt_text = prompt(prompt_input)
+            self.output_dir = f"{self.output_parent_dir}/{basename(self.prompt_text.value)}"
+            #if isdir(self.output_dir): If exists...
+            makedirs(self.output_dir, exist_ok=True)
         except ValueError as e:
             print(f"A ValueError occurred: {e}")
         except TypeError as e:
@@ -93,19 +100,34 @@ class Task:
                 # Prompt is folder of files
                 # Firstly we will allow only one redirection
                 list_of_file_paths = glob(f'{self.prompt_text.value}/*')
-                self.children = [Task(file_path) for file_path in list_of_file_paths if isfile(file_path)]
-            elif self.prompt_text.type == prompt_types[1] or self.prompt_text.type == prompt_types[2]:
-                # Prompt is file path or url.
+                self.children = [Task(file_path,output_parent_dir=self.output_dir) for file_path in list_of_file_paths if isfile(file_path)]
+            else:
                 try:
-                    image = load_image(self.prompt_text.value)
-                    self.prompt_image = image_file_path
+                    if self.prompt_text.type == prompt_types[-1]:
+                        # Prompt is free text. So we will generate an image.
+                        image = load_image(genImage(self.prompt_text.value))
+                        image_file_path = f"{self.output_dir}/prompt_text_to_prompt_image.png"
+                        image.save(image_file_path)
+                    else:
+                        # Prompt is file path or url.
+                        image = load_image(self.prompt_text.value)
+                        image_file_path = self.prompt_text.value
+                    self.prompt_image = {"path":image_file_path, "image":image}
                 except ValueError as e:
                     print(f"A ValueError occurred: {e}")
                     self.prompt_image = None
-            else:
-                # Prompt is free text. So we will generate an image.
-                image = load_image(genImage(self.prompt_text.value))
-                self.prompt_image = image_file_path
+    def isTaskDir(self):
+        return (self.prompt_text is not None) and (self.prompt_text.type == prompt_types[0])
+    def isTaskImage(self):
+        return (self.prompt_text is not None) and (self.prompt_text.type == prompt_types[1] or self.prompt_text.type == prompt_types[2]) and (self.prompt_image is not None)
+    def isTaskFreeText(self):
+        return (self.prompt_text is not None) and (self.prompt_text.type == prompt_types[-1]) and (self.prompt_image is not None)
+    def deleteOutput(self):
+        try:
+            rmtree(self.output_dir)
+            print(f'Folder {self.output_dir} and its content removed') # Folder and its content removed
+        except:
+            print(f'Folder {self.output_dir} not deleted')
         
 
         
