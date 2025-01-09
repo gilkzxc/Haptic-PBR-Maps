@@ -16,7 +16,7 @@ import tasks
 Types = ["text","image","PBR","rendered_PBR"]
             
             
-Tasks = deque([])
+
 
         
 
@@ -70,8 +70,10 @@ def main(args):
     run = True
     dms_pipeline = ml_dms_dataset.infering_pipeline(args.pretrained_dms_path)
     sm_diffuser = StableMaterials.PBR_Diffuser()
-    mf_diffuser = MatForger.PBR_Diffuser()
+    #mf_diffuser = MatForger.PBR_Diffuser()
+    mf_diffuser = None
     os.makedirs(args.output_folder, exist_ok=True)
+    Tasks = deque([])
     while run:
         if yes_no_question("Skip prompt?") == "No":
             Tasks.append(getPrompt())

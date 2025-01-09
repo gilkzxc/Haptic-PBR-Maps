@@ -55,7 +55,7 @@ class prompt:
         if not isinstance(prompt_input, str):
             raise TypeError(f"Prompt must be a string. Your input: {prompt_input} and it's type: {type(prompt_input)}")
         self.value = prompt_input
-        self.prompt_type = prompt_type
+        self.type = prompt_type
         if prompt_type is None:
             if isdir(prompt_input):
                 self.type = prompt_types[0]
@@ -64,9 +64,9 @@ class prompt:
             else:
                 is_valid, message = is_valid_url(prompt_input)
                 if is_valid:
-                    self.prompt_type = prompt_types[2]
+                    self.type = prompt_types[2]
                 elif message == "Invalid URL structure":
-                    self.prompt_type = prompt_types[3]
+                    self.type = prompt_types[3]
                 else:
                     raise ValueError(f"Prompt was recognised as URL address, but this error occured: {message}")
 
