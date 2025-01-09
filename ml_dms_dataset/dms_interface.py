@@ -1,5 +1,8 @@
 # interface with DMS
-import inference
+try:
+    from . import inference
+except ImportError:
+    import inference  # Fallback for direct execution
 import argparse
 from ast import If, Try
 import torchvision.transforms as TTR
@@ -184,7 +187,7 @@ class infering_pipeline:
         result["material_mapping"] = infered_image_obj.fetch_estimation()
         print(f"Image {infered_image_obj.image_path} stats:\n{infered_image_obj.stats}")
         result["histogram"] = infered_image_obj.histogram()
-        infered_image_obj.write_concate_results(self.output_folder_path)
+        infered_image_obj.write_concate_results()
         print(f"Image {infered_image_obj.image_path} : Saved result in desired output file.")
         result["object"] = infered_image_obj
         return result
@@ -206,7 +209,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--pretrained_path',
         type=str,
-        default='',
+        default=pretrained_path,
         help='path to the pretrained model',
     )
     parser.add_argument(

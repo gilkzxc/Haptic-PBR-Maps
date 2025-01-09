@@ -1,7 +1,7 @@
 import torchvision.transforms.functional as TF
 from datasets import load_dataset
 from torch.utils.data import DataLoader
-from PBR import PBR
+from .PBR import PBR
 
 
 # image processing function        

@@ -1,17 +1,16 @@
 # To run: conda env create -f environment.yaml
 name: Haptic-PBR-Maps
 channels:
-    - defaults
     - pytorch
     - nvidia
+    - conda-forge
+    - defaults
 dependencies:
-    - python=3.11
+    - python=3.12
     - pip
     - numpy
     - pytorch
-    - pytorch-gpu
     - pytorch-cuda=12.4
-    - cudatoolkit
     - torchvision
     - configargparse
     - pip:
@@ -25,3 +24,5 @@ dependencies:
         - accelerate
         - moderngl
         - questionary
+        - pyrr
+        - gradio_client

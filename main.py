@@ -32,15 +32,19 @@ def runCycle(tasks_pipe, dms_pipeline, sm_diffuser, mf_diffuser):
         head = tasks_pipe.popleft()
         if tasks.States[head.nextState] == "PBR transform":
             # Run in PBR diffusers.
+            run_pbr_successfull = head.to_PBR(sm_diffuser, mf_diffuser)
+            if not run_pbr_successfull:
+                head.deleteOutput()
+                continue
         elif tasks.States[head.nextState] == "Material Segmentation":
             # Run in dms segmentation.
             run_material_segmentation_successfull = head.to_material_segmentation(dms_pipeline)
             if not run_material_segmentation_successfull:
                 head.deleteOutput()
                 continue
-        elif tasks.States[head.nextState] == "Material Properties":
+        #elif tasks.States[head.nextState] == "Material Properties":
             # Run in 
-        elif tasks.States[head.nextState] == "Haptic Transform":
+        #elif tasks.States[head.nextState] == "Haptic Transform":
             #run in.
         head.nextState += 1
         if head.nextState < len(tasks.States): # Still not finished.
@@ -77,23 +81,20 @@ def main(args):
     
 
 if __name__ == '__main__':
+    # Get the directory of the current script
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
     parser = argparse.ArgumentParser(prog='Haptic-PBR-Maps Generator', description='Utilize material segmentation with PBR diffusers to create Haptic PBR Maps.')
     parser.add_argument(
         '--pretrained_dms_path',
         type=str,
-        default='./ml_dms_datatset/DMS46_v1.pt',
+        default=f'{current_dir}/ml_dms_dataset/DMS46_v1.pt',
         help='path to the pretrained model of DMS',
     )
     parser.add_argument(
         '--output_folder',
         type=str,
-        default='./output/',
-        help='path to output folder',
-    )
-    parser.add_argument(
-        '--output_folder',
-        type=str,
-        default='./output/',
+        default=f'{current_dir}/output/',
         help='path to output folder',
     )
     """parser.add_argument(

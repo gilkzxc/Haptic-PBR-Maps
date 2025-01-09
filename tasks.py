@@ -158,7 +158,58 @@ class Task:
             self.material_segmentation = run_singleton_result
             print("Done...")
             return True
-        
+        return False
+    def to_PBR(self,sm_diffuser, mf_diffuser):
+        print(f"Prompt: {self.prompt_text.value} , begins PBR tile maps generation.")
+        if self.isTaskDir():
+            if self.children:
+                print(f"Begin children uploading to pipeline.")
+                for child in self.children:
+                    print(f"Child path: {child.prompt_text.value}") 
+                    if not child.to_PBR(sm_diffuser, mf_diffuser):
+                        print("Error in child. Deleting parent and it's children output.")
+                        return False
+                print("Done children...")
+            else:
+                print(f"{self.prompt_text.value} is an empty directory.")
+                return False
+        elif self.isTaskImage():
+            sm_gen = {}
+            if not self.prompt_image is None:
+                sm_gen["image"] = sm_diffuser.generator(self.prompt_image["path"])
+                if not sm_gen["image"] is None:
+                    sm_gen["image"].save(f"{self.output_dir}/sm/image")
+                else:
+                    print(f"Prompt: {self.prompt_text.value} , Error StableMaterials failed in image prompt.")
+            else:
+                print(f"Prompt: {self.prompt_text.value} , Error StableMaterials failed in image prompt.")
+            if sm_gen != {} and sm_gen["image"] is not None:
+                if self.PBR is None:
+                    self.PBR = {}
+                self.PBR["SM"] = sm_gen
+                print("Done...")
+                return True
+            return False
+        elif self.isTaskFreeText():
+            sm_gen = {}
+            if not self.prompt_image is None:
+                sm_gen["image"] = sm_diffuser.generator(self.prompt_image["path"])
+                if not sm_gen["image"] is None:
+                    sm_gen["image"].save(f"{self.output_dir}/sm/image")
+                else:
+                    print(f"Prompt: {self.prompt_text.value} , Error StableMaterials failed in image prompt.")
+            else:
+                print(f"Prompt: {self.prompt_text.value} , Error StableMaterials failed in image prompt.")
+            sm_gen["text"] = sm_diffuser.generator(self.prompt_text.value)
+            if not sm_gen["text"] is None:
+                sm_gen["text"].save(f"{self.output_dir}/sm/text")
+            if sm_gen != {} and ("image" in sm_gen and sm_gen["image"] is not None) and ("text" in sm_gen and sm_gen["text"] is not None):
+                if self.PBR is None:
+                    self.PBR = {}
+                self.PBR["SM"] = sm_gen
+                print("Done...")
+                return True
+            return False
 
         
         

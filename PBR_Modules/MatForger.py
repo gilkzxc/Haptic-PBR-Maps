@@ -2,7 +2,7 @@ from numpy import imag
 import torch
 from PIL import Image
 from diffusers import StableDiffusionPipeline
-from PBR import PBR
+from .PBR import PBR
 from collections import deque
 from os import path
 

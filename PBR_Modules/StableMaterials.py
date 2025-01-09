@@ -1,6 +1,6 @@
 from diffusers import DiffusionPipeline, LCMScheduler, UNet2DConditionModel
 
-from PBR import PBR
+from .PBR import PBR
 from diffusers.utils import load_image
 import torch
 from os import path

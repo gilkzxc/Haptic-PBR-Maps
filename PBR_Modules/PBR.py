@@ -46,6 +46,13 @@ class PBR:
         self.texture_repeat = np.array([1, 1], dtype='f4')
         self.camera_position = np.array([0.0, 2.0, 5.0], dtype=np.float32)  # Default camera position - slightly above and in front
     
+    def save(self, dir):
+        for tile in self.tile_maps:
+            if self.tile_maps[tile] is not None:
+                self.tile_maps[tile].save(f"{dir}/{tile}.png")
+        if self.render is not None:
+            self.render.save(f"{dir}/render.png")
+
 
 
     def set_matrices(self, model, view, projection):

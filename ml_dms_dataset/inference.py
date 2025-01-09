@@ -11,7 +11,6 @@
 
 import argparse
 from ast import If
-from symbol import parameters
 import torchvision.transforms as TTR
 import os
 import glob
@@ -28,7 +27,16 @@ random.seed(112)
 dms46 = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 17, 18, 19, 20, 21, 23,
     24, 26, 27, 29, 30, 32, 33, 34, 35, 36, 37, 38, 39, 41, 43, 44, 46, 47, 48, 49,
     50, 51, 52, 53, 56, ]
-t = json.load(open(os.path.expanduser('./taxonomy.json'), 'rb'))
+
+# Get the directory of the current script
+current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct the path to taxonomy.json relative to this directory
+taxonomy_path = os.path.join(current_dir, "taxonomy.json")
+
+# Load the JSON file
+t = json.load(open(taxonomy_path, "rb"))
+
 srgb_colormap = [
     t['srgb_colormap'][i] for i in range(len(t['srgb_colormap'])) if i in dms46
 ]
