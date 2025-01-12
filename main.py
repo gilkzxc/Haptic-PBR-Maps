@@ -1,35 +1,108 @@
 #main
+from collections import deque
+
+from PBR_Modules import MatForger, MatSynth, StableMaterials
 import ml_dms_dataset
+import PBR_Modules
 import argparse
-Types = ["text","sound","image","PBR"]
 
-class Task:
-    def __init__(self,initial_type,file_path,data):
-        self.type = initial_type
-        self.original_file_path = file_path
-        self.data = data
-        self.nextState = None
-    
-    def 
+
+import questionary
+import cv2
+import os
+#from tasks import Task, prompt_types
+import tasks
+
+Types = ["text","image","PBR","rendered_PBR"]
+            
+            
+
+
         
+
+def yes_no_question(question):
+    return questionary.select(question,choices=["Yes","No"]).ask()
+
+
     
-def fetch_and_order_input():
-    #Organise the input from user, wheter from GUI or CLI mode.
-    return {}
 
-def PBR_transform_generator():
-    #runs EasyPBR, in order to create a PBR correspondor files for each image from input.
-    return ""
+def runCycle(tasks_pipe, dms_pipeline, sm_diffuser, mf_diffuser):
+    new_pipe = deque([])
+    while len(tasks_pipe) > 0:
+        head = tasks_pipe.popleft()
+        if tasks.States[head.nextState] == "PBR transform":
+            # Run in PBR diffusers.
+            run_pbr_successfull = head.to_PBR(sm_diffuser, mf_diffuser)
+            if not run_pbr_successfull:
+                head.deleteOutput()
+                continue
+        elif tasks.States[head.nextState] == "Material Segmentation":
+            # Run in dms segmentation.
+            run_material_segmentation_successfull = head.to_material_segmentation(dms_pipeline)
+            if not run_material_segmentation_successfull:
+                head.deleteOutput()
+                continue
+        #elif tasks.States[head.nextState] == "Material Properties":
+            # Run in 
+        #elif tasks.States[head.nextState] == "Haptic Transform":
+            #run in.
+        head.nextState += 1
+        if head.nextState < len(tasks.States): # Still not finished.
+          new_pipe.append(head)
+    return new_pipe
 
-def matching_PBR_data_by_raw_input_fetcher():
-    #runs ONE-PEACE along our included huge PBR datasets. Retrieve the best matching PBR.
-    return ""
 
-def material_segmentation():
-    #Runs Material Segmentation model
+def getPrompt():
+    prompt_type = questionary.select("Type of prompt:",choices=tasks.prompt_types).ask()
+    if prompt_type == tasks.prompt_types[0] or prompt_type == tasks.prompt_types[1]:
+        file_folder_path = questionary.path("Enter path: ").ask()
+        return tasks.Task(file_folder_path)
+    elif prompt_type == tasks.prompt_types[2]:
+        url_path = input("Enter url path: ")
+        return tasks.Task(url_path)
     
-def main():
+    # Free text
+    free_text = input("Enter text: ")
+    return tasks.Task(free_text)
+        
+def main(args):
+    print("Welcome to Haptic PBR Generator")
+    run = True
+    dms_pipeline = ml_dms_dataset.infering_pipeline(args.pretrained_dms_path)
+    sm_diffuser = StableMaterials.PBR_Diffuser()
+    #mf_diffuser = MatForger.PBR_Diffuser()
+    mf_diffuser = None
+    os.makedirs(args.output_folder, exist_ok=True)
+    Tasks = deque([])
+    while run:
+        if yes_no_question("Skip prompt?") == "No":
+            Tasks.append(getPrompt())
+        Tasks = runCycle(Tasks, dms_pipeline, sm_diffuser, mf_diffuser)
+        run = len(Tasks) > 0
+    print("Exiting Haptic PBR Generator")
     
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    # Get the directory of the current script
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+
+    parser = argparse.ArgumentParser(prog='Haptic-PBR-Maps Generator', description='Utilize material segmentation with PBR diffusers to create Haptic PBR Maps.')
+    parser.add_argument(
+        '--pretrained_dms_path',
+        type=str,
+        default=f'{current_dir}/ml_dms_dataset/DMS46_v1.pt',
+        help='path to the pretrained model of DMS',
+    )
+    parser.add_argument(
+        '--output_folder',
+        type=str,
+        default=f'{current_dir}/output/',
+        help='path to output folder',
+    )
+    """parser.add_argument(
+        '--consistent',
+        type=str,
+        default='./output/',
+        help='Run Consistent StableMaterial',
+    )"""
+    main(parser.parse_args())

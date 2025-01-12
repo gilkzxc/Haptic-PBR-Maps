@@ -1,0 +1,1634 @@
+{
+    "Wood": {
+        "Tactile Compliance": {
+            "Young's Modulus": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Poisson's Ratio": {
+                "value": null,
+                "units": "None",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Local Deformation": {
+            "Displacement": {
+                "value": null,
+                "units": "\u00b5m, nm",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Strain": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Damping": {
+            "Damping Coefficient": {
+                "value": null,
+                "units": "Ns/m",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Loss Factor": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Relaxation": {
+            "Stress over Time": {
+                "value": null,
+                "units": "Pa over s",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Yielding": {
+            "Yield Strength": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Adhesive Tack": {
+            "Tack Force": {
+                "value": null,
+                "units": "N",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Adhesion Energy": {
+                "value": null,
+                "units": "J/m\u00b2",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macrotexture": {
+            "Average Roughness": {
+                "value": null,
+                "units": "\u00b5m, mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Roughness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "\u00b5m",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Regularity": {
+            "Spatial Periodicity": {
+                "value": null,
+                "units": "mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Roughness": {
+            "Average Roughness": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Coarseness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Thermal Cooling": {
+          "Thermal Effusivity": {
+            "value": 659,
+            "units": "Ws^\u00bd/m\u00b2K",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Wood/thermal.png"
+          }
+        },
+        "Thermal Persistence": {
+          "Thermal Diffusivity": {
+            "value": 0.27,
+            "units": "mm\u00b2/s",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Wood/thermal.png"
+          }
+        },
+        "Thermal Conductivity": {
+          "Thermal Conductivity": {
+            "value": 0.343,
+            "units": "W/mK",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Wood/thermal.png"
+          }
+        },
+        "Thermal Resistance": {
+            "Thermal Resistance": {
+                "value": null,
+                "units": "K\u00b7m\u00b2/W",
+                "haptic_dimension": "thermal conductance",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        }
+    },
+    "Metal": {
+        "Tactile Compliance": {
+            "Young's Modulus": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Poisson's Ratio": {
+                "value": null,
+                "units": "None",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Local Deformation": {
+            "Displacement": {
+                "value": null,
+                "units": "\u00b5m, nm",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Strain": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Damping": {
+            "Damping Coefficient": {
+                "value": null,
+                "units": "Ns/m",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Loss Factor": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Relaxation": {
+            "Stress over Time": {
+                "value": null,
+                "units": "Pa over s",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Yielding": {
+            "Yield Strength": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Adhesive Tack": {
+            "Tack Force": {
+                "value": null,
+                "units": "N",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Adhesion Energy": {
+                "value": null,
+                "units": "J/m\u00b2",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macrotexture": {
+            "Average Roughness": {
+                "value": null,
+                "units": "\u00b5m, mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Roughness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "\u00b5m",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Regularity": {
+            "Spatial Periodicity": {
+                "value": null,
+                "units": "mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Roughness": {
+            "Average Roughness": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Coarseness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Thermal Cooling": {
+          "Thermal Effusivity": {
+            "value": 23688,
+            "units": "Ws^\u00bd/m\u00b2K",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Metal(Aluminum)/thermal.png"
+          }
+        },
+        "Thermal Persistence": {
+          "Thermal Diffusivity": {
+            "value": 91,
+            "units": "mm\u00b2/s",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Metal(Aluminum)/thermal.png"
+          }
+        },
+        "Thermal Conductivity": {
+          "Thermal Conductivity": {
+            "value": 225.94,
+            "units": "W/mK",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Metal(Aluminum)/thermal.png"
+          }
+        },
+        "Thermal Resistance": {
+            "Thermal Resistance": {
+                "value": null,
+                "units": "K\u00b7m\u00b2/W",
+                "haptic_dimension": "thermal conductance",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        }
+    },
+    "Stone": {
+        "Tactile Compliance": {
+            "Young's Modulus": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "https://material-properties.org/granite",
+                "citation": ""
+            },
+            "Poisson's Ratio": {
+                "value": null,
+                "units": "None",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
+                "citation": ""
+            }
+        },
+        "Local Deformation": {
+            "Displacement": {
+                "value": null,
+                "units": "\u00b5m, nm",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Strain": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Damping": {
+            "Damping Coefficient": {
+                "value": null,
+                "units": "Ns/m",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Loss Factor": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Relaxation": {
+            "Stress over Time": {
+                "value": null,
+                "units": "Pa over s",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Yielding": {
+            "Yield Strength": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Adhesive Tack": {
+            "Tack Force": {
+                "value": null,
+                "units": "N",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Adhesion Energy": {
+                "value": null,
+                "units": "J/m\u00b2",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macrotexture": {
+            "Average Roughness": {
+                "value": null,
+                "units": "\u00b5m, mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Roughness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "\u00b5m",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Regularity": {
+            "Spatial Periodicity": {
+                "value": null,
+                "units": "mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Roughness": {
+            "Average Roughness": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Coarseness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Thermal Cooling": {
+          "Thermal Effusivity": {
+            "value": 1955,
+            "units": "Ws^\u00bd/m\u00b2K",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Stone/thermal.png"
+          }
+        },
+        "Thermal Persistence": {
+          "Thermal Diffusivity": {
+            "value": 0.81,
+            "units": "mm\u00b2/s",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Stone/thermal.png"
+          }
+        },
+        "Thermal Conductivity": {
+          "Thermal Conductivity": {
+            "value": 1.757,
+            "units": "W/mK",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Stone/thermal.png"
+          }
+        },
+        "Thermal Resistance": {
+            "Thermal Resistance": {
+                "value": null,
+                "units": "K\u00b7m\u00b2/W",
+                "haptic_dimension": "thermal conductance",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        }
+    },
+    "Leather": {
+        "Tactile Compliance": {
+            "Young's Modulus": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "https://material-properties.org/leather",
+                "citation": ""
+            },
+            "Poisson's Ratio": {
+                "value": null,
+                "units": "None",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
+                "citation": ""
+            }
+        },
+        "Local Deformation": {
+            "Displacement": {
+                "value": null,
+                "units": "\u00b5m, nm",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Strain": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Damping": {
+            "Damping Coefficient": {
+                "value": null,
+                "units": "Ns/m",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Loss Factor": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Relaxation": {
+            "Stress over Time": {
+                "value": null,
+                "units": "Pa over s",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Yielding": {
+            "Yield Strength": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Adhesive Tack": {
+            "Tack Force": {
+                "value": null,
+                "units": "N",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Adhesion Energy": {
+                "value": null,
+                "units": "J/m\u00b2",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macrotexture": {
+            "Average Roughness": {
+                "value": null,
+                "units": "\u00b5m, mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Roughness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "\u00b5m",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Regularity": {
+            "Spatial Periodicity": {
+                "value": null,
+                "units": "mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Roughness": {
+            "Average Roughness": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Coarseness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Thermal Cooling": {
+          "Thermal Effusivity": {
+            "value": 321.1,
+            "units": "Ws^\u00bd/m\u00b2K",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/application/thermal-effusivity-leather-and-cloth",
+            "citation": "./ref/Leather/thermal_eff.png"
+          }
+        },
+        "Thermal Persistence": {
+            "Thermal Diffusivity": {
+                "value": null,
+                "units": "mm\u00b2/s",
+                "haptic_dimension": "thermal conductance",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Thermal Conductivity": {
+          "Thermal Conductivity": {
+            "value": 0.0598,
+            "units": "W/mK",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/application/thermal-resistance-thermal-conductivity-of-textiles",
+            "citation": "./ref/Leather/thermal_res_cond.png"
+          }
+        },
+        "Thermal Resistance": {
+          "Thermal Resistance": {
+            "value": 0.0274,
+            "units": "K\u00b7m\u00b2/W",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/application/thermal-resistance-thermal-conductivity-of-textiles",
+            "citation": "./ref/Leather/thermal_res_cond.png"
+          }
+        }
+    },
+    "Fabric": {
+        "Tactile Compliance": {
+            "Young's Modulus": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "https://material-properties.org/cotton",
+                "citation": ""
+            },
+            "Poisson's Ratio": {
+                "value": null,
+                "units": "None",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
+                "citation": ""
+            }
+        },
+        "Local Deformation": {
+            "Displacement": {
+                "value": null,
+                "units": "\u00b5m, nm",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Strain": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Damping": {
+            "Damping Coefficient": {
+                "value": null,
+                "units": "Ns/m",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Loss Factor": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Relaxation": {
+            "Stress over Time": {
+                "value": null,
+                "units": "Pa over s",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Yielding": {
+            "Yield Strength": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Adhesive Tack": {
+            "Tack Force": {
+                "value": null,
+                "units": "N",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Adhesion Energy": {
+                "value": null,
+                "units": "J/m\u00b2",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macrotexture": {
+            "Average Roughness": {
+                "value": null,
+                "units": "\u00b5m, mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Roughness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "\u00b5m",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Regularity": {
+            "Spatial Periodicity": {
+                "value": null,
+                "units": "mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Roughness": {
+            "Average Roughness": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Coarseness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Thermal Cooling": {
+          "Thermal Effusivity": {
+            "value": 1062,
+            "units": "Ws^\u00bd/m\u00b2K",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Fabric/thermal.png"
+          }
+        },
+        "Thermal Persistence": {
+          "Thermal Diffusivity": {
+            "value": 0.17,
+            "units": "mm\u00b2/s",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Fabric/thermal.png"
+          }
+        },
+        "Thermal Conductivity": {
+          "Thermal Conductivity": {
+            "value": 0.444,
+            "units": "W/mK",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Fabric/thermal.png"
+          }
+        },
+        "Thermal Resistance": {
+          "Thermal Resistance": {
+            "value": null,
+            "units": "K\u00b7m\u00b2/W",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "",
+            "citation": ""
+          }
+        }
+    },
+    "Concrete": {
+        "Tactile Compliance": {
+            "Young's Modulus": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "https://material-properties.org/concrete",
+                "citation": ""
+            },
+            "Poisson's Ratio": {
+                "value": null,
+                "units": "None",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
+                "citation": ""
+            }
+        },
+        "Local Deformation": {
+            "Displacement": {
+                "value": null,
+                "units": "\u00b5m, nm",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Strain": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Damping": {
+            "Damping Coefficient": {
+                "value": null,
+                "units": "Ns/m",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Loss Factor": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Relaxation": {
+            "Stress over Time": {
+                "value": null,
+                "units": "Pa over s",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Yielding": {
+            "Yield Strength": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Adhesive Tack": {
+            "Tack Force": {
+                "value": null,
+                "units": "N",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Adhesion Energy": {
+                "value": null,
+                "units": "J/m\u00b2",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macrotexture": {
+            "Average Roughness": {
+                "value": null,
+                "units": "\u00b5m, mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Roughness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "\u00b5m",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Regularity": {
+            "Spatial Periodicity": {
+                "value": null,
+                "units": "mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Roughness": {
+            "Average Roughness": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Coarseness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Thermal Cooling": {
+          "Thermal Effusivity": {
+            "value": 1257,
+            "units": "Ws^\u00bd/m\u00b2K",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Concrete/thermal.png"
+          }
+        },
+        "Thermal Persistence": {
+          "Thermal Diffusivity": {
+            "value": 0.69,
+            "units": "mm\u00b2/s",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Concrete/thermal.png"
+          }
+        },
+        "Thermal Conductivity": {
+          "Thermal Conductivity": {
+            "value": 1.046,
+            "units": "W/mK",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Concrete/thermal.png"
+          }
+        },
+        "Thermal Resistance": {
+            "Thermal Resistance": {
+                "value": null,
+                "units": "K\u00b7m\u00b2/W",
+                "haptic_dimension": "thermal conductance",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        }
+    },
+    "Ceramic": {
+        "Tactile Compliance": {
+          "Young's Modulus": {
+            "value": 416,
+            "units": "Pa, MPa, GPa",
+            "haptic_dimension": "hardness",
+            "condition_value_map": {},
+            "source": "https://srdata.nist.gov/CeramicDataPortal/Pds/Scdaos",
+            "citation": "./ref/Ceramic/youngs_modulus.png"
+          },
+          "Poisson's Ratio": {
+            "value": 0.231,
+            "units": "None",
+            "haptic_dimension": "hardness",
+            "condition_value_map": {},
+            "source": "https://srdata.nist.gov/CeramicDataPortal/Pds/Scdaos",
+            "citation": "./ref/Ceramic/possion_ratio.png"
+          }
+        },
+        "Local Deformation": {
+            "Displacement": {
+                "value": null,
+                "units": "\u00b5m, nm",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Strain": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Damping": {
+            "Damping Coefficient": {
+                "value": null,
+                "units": "Ns/m",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Loss Factor": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Relaxation": {
+            "Stress over Time": {
+                "value": null,
+                "units": "Pa over s",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Yielding": {
+            "Yield Strength": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+          "Coefficient of Kinetic Friction": {
+            "value": null,
+            "units": "dimensionless",
+            "haptic_dimension": "friction",
+            "condition_value_map": {},
+            "source": "https://srdata.nist.gov/CeramicDataPortal/Pds/Scdaos",
+            "citation": ""
+          }
+        },
+        "Adhesive Tack": {
+            "Tack Force": {
+                "value": null,
+                "units": "N",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Adhesion Energy": {
+                "value": null,
+                "units": "J/m\u00b2",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macrotexture": {
+            "Average Roughness": {
+                "value": null,
+                "units": "\u00b5m, mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Roughness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "\u00b5m",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Regularity": {
+            "Spatial Periodicity": {
+                "value": null,
+                "units": "mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Roughness": {
+            "Average Roughness": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Coarseness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Thermal Cooling": {
+            "Thermal Effusivity": {
+                "value": null,
+                "units": "Ws^\u00bd/m\u00b2K",
+                "haptic_dimension": "thermal conductance",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Thermal Persistence": {
+          "Thermal Diffusivity": {
+            "value": 11.1,
+            "units": "mm\u00b2/s",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://srdata.nist.gov/CeramicDataPortal/Pds/Scdaos",
+            "citation": "./ref/Ceramic/thermal_diff.png"
+          }
+        },
+        "Thermal Conductivity": {
+          "Thermal Conductivity": {
+            "value": 33,
+            "units": "W/mK",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://srdata.nist.gov/CeramicDataPortal/Pds/Scdaos",
+            "citation": "./ref/Ceramic/thermal_cond.png"
+          }
+        },
+        "Thermal Resistance": {
+            "Thermal Resistance": {
+                "value": null,
+                "units": "K\u00b7m\u00b2/W",
+                "haptic_dimension": "thermal conductance",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        }
+    },
+    "Soil": {
+        "Tactile Compliance": {
+            "Young's Modulus": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "https://www.geotechdata.info/parameter/soil-elastic-modulus.html",
+                "citation": ""
+            },
+            "Poisson's Ratio": {
+                "value": null,
+                "units": "None",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
+                "citation": ""
+            }
+        },
+        "Local Deformation": {
+            "Displacement": {
+                "value": null,
+                "units": "\u00b5m, nm",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Strain": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Damping": {
+            "Damping Coefficient": {
+                "value": null,
+                "units": "Ns/m",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Loss Factor": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Relaxation": {
+            "Stress over Time": {
+                "value": null,
+                "units": "Pa over s",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Yielding": {
+            "Yield Strength": {
+                "value": null,
+                "units": "Pa, MPa, GPa",
+                "haptic_dimension": "hardness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Tactile Stiction": {
+            "Coefficient of Static Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Sliding Resistance": {
+            "Coefficient of Kinetic Friction": {
+                "value": null,
+                "units": "dimensionless",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Adhesive Tack": {
+            "Tack Force": {
+                "value": null,
+                "units": "N",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            },
+            "Adhesion Energy": {
+                "value": null,
+                "units": "J/m\u00b2",
+                "haptic_dimension": "friction",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macrotexture": {
+            "Average Roughness": {
+                "value": null,
+                "units": "\u00b5m, mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Roughness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "\u00b5m",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Macro Regularity": {
+            "Spatial Periodicity": {
+                "value": null,
+                "units": "mm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Roughness": {
+            "Average Roughness": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Micro Coarseness": {
+            "Roughness Parameters": {
+                "value": null,
+                "units": "nm",
+                "haptic_dimension": "microscopic roughness",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        },
+        "Thermal Cooling": {
+          "Thermal Effusivity": {
+            "value": 1067,
+            "units": "Ws^\u00bd/m\u00b2K",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Soil/thermal.png"
+          }
+        },
+        "Thermal Persistence": {
+          "Thermal Diffusivity": {
+            "value": 0.62,
+            "units": "mm\u00b2/s",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Soil/thermal.png"
+          }
+        },
+        "Thermal Conductivity": {
+          "Thermal Conductivity": {
+            "value": 0.837,
+            "units": "W/mK",
+            "haptic_dimension": "thermal conductance",
+            "condition_value_map": {},
+            "source": "https://thermtest.com/thermal-resources/materials-database",
+            "citation": "./ref/Soil/thermal.png"
+          }
+        },
+        "Thermal Resistance": {
+            "Thermal Resistance": {
+                "value": null,
+                "units": "K\u00b7m\u00b2/W",
+                "haptic_dimension": "thermal conductance",
+                "condition_value_map": {},
+                "source": "",
+                "citation": ""
+            }
+        }
+    }
+}

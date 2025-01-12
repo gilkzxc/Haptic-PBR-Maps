@@ -1,0 +1,107 @@
+
+
+		Concrete
+        "Macro Roughness": {
+            "Roughness Parameters": {
+                "value": 0.0003,
+                "units": "m",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "Stephen Hall, in  Branan's Rules of Thumb for Chemical Engineers (Fifth Edition), 2012",
+                "citation": ""
+            }
+        },	
+		
+		Metal
+		
+		"Macro Roughness": {
+            "Roughness Parameters": {
+                "value": 0.000045,
+                "units": "m",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "Stephen Hall, in  Branan's Rules of Thumb for Chemical Engineers (Fifth Edition), 2012",
+                "citation": ""
+            }
+        },
+		
+		Stone
+		
+		"Macro Roughness": {
+            "Roughness Parameters": {
+                "value": 39.4,
+                "units": "um",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "MEASURING SURFACE ROUGHNESS ON STONE: BACK TO BASICS - C.A. Grissom, A.E. Charola and M.J. Wachowiak",
+                "citation": ""
+            }
+        },
+		
+		fabric
+		
+		"Macro Roughness": {
+            "Roughness Parameters": {
+                "value": 125.9,
+                "units": "um",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "Study on Fabric Surface Roughness and its Influence on Worsted Fabric Abrasion Resistance - Amirkabir University of Technology, Textile Engineering Department, Tehran, Tehran IRAN",
+                "citation": ""
+            }
+        },
+		
+		wood
+		
+		"Macro Roughness": {
+            "Roughness Parameters": {
+                "value": 110.9,
+                "units": "um",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "Effects of four surfacing methods on surface properties and coating performance of red oak wood - Roger E. Hernández",
+                "citation": ""
+            }
+        },
+		
+
+		Ceramics
+		
+		"Macro Roughness": {
+            "Roughness Parameters": {
+                "value": 0.8,
+                "units": "um",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "Surface Roughness in Ceramics with Different Finishing Techniques Using Atomic Force Microscope and Profilometer -W. G. Miranda-Júnior; R. Prioli; J. Thompson; M. Oda ",
+                "citation": ""
+            }
+        },
+		
+		leather
+		
+		"Macro Roughness": {
+            "Roughness Parameters": {
+                "value": 8.4,
+                "units": "um",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "CNC milling of EVA foam with varying hardness for custom orthotic shoe insoles and process parameter optimization",
+                "citation": ""
+            }
+        },
+		
+		Soil 
+		
+		"Macro Roughness": {
+            "Roughness Parameters": {
+                "value": 1.78,
+                "units": "cm",
+                "haptic_dimension": "macroscopic roughness",
+                "condition_value_map": {},
+                "source": "https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/soil-surface-roughness",
+                "citation": ""
+            }
+        },
+				
+		
