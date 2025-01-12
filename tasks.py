@@ -87,9 +87,6 @@ class Task:
         self.nextState = init_state
         try:
             self.prompt_text = prompt(prompt_input)
-            self.output_dir = f"{self.output_parent_dir}/{basename(self.prompt_text.value)}"
-            #if isdir(self.output_dir): If exists...
-            makedirs(self.output_dir, exist_ok=True)
         except ValueError as e:
             print(f"A ValueError occurred: {e}")
         except TypeError as e:
@@ -97,18 +94,27 @@ class Task:
         if self.prompt_text:
             if self.prompt_text.type == prompt_types[0]:
                 # Prompt is folder of files
+                self.output_dir = f"{self.output_parent_dir}/{basename(self.prompt_text.value)}"
+                makedirs(self.output_dir, exist_ok=True)
                 # Firstly we will allow only one redirection
                 list_of_file_paths = glob(f'{self.prompt_text.value}/*')
                 self.children = [Task(file_path,output_parent_dir=self.output_dir) for file_path in list_of_file_paths if isfile(file_path)]
             else:
                 try:
                     if self.prompt_text.type == prompt_types[-1]:
-                        # Prompt is free text. So we will generate an image.
+                        # Prompt is free text.
+                        base = basename(self.prompt_text.value)
+                        base = base+"_" if base[-1] == "." else base # Free text can end in point, which in some os like Windows, cause bugs in path.
+                        self.output_dir = f"{self.output_parent_dir}/{base}"
+                        makedirs(self.output_dir, exist_ok=True)
+                        # So we will generate an image.
                         image = load_image(genImage(self.prompt_text.value))
                         image_file_path = f"{self.output_dir}/prompt_text_to_prompt_image.png"
                         image.save(image_file_path)
                     else:
                         # Prompt is file path or url.
+                        self.output_dir = f"{self.output_parent_dir}/{basename(self.prompt_text.value)}"
+                        makedirs(self.output_dir, exist_ok=True)
                         image = load_image(self.prompt_text.value)
                         image_file_path = self.prompt_text.value
                     self.prompt_image = {"path":image_file_path, "image":image}
