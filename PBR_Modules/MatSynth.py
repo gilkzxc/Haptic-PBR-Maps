@@ -32,7 +32,6 @@ class MatSynth:
         else:
             self.dataset = load_dataset("gvecchio/MatSynth", streaming = is_streaming,)
             
-     
     
     def filter_by_tags(self, *args):
         ds = self.dataset

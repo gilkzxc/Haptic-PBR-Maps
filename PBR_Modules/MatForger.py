@@ -2,6 +2,7 @@ from numpy import imag
 import torch
 from PIL import Image
 from diffusers import StableDiffusionPipeline
+
 from .PBR import PBR
 from collections import deque
 from os import path
@@ -15,6 +16,7 @@ class PBR_Diffuser:
         self.pipe.to(self.device)
         self.pipeline_to_diffuse = deque([])
         
+
     def generator(self,prompt):
         if path.isfile(prompt):
             prompt = Image.open(prompt)
