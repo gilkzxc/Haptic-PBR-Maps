@@ -47,6 +47,8 @@ class PBR:
         self.camera_position = np.array([0.0, 2.0, 5.0], dtype=np.float32)  # Default camera position - slightly above and in front
     
     def save(self, dir):
+        if not os.path.isdir(dir):
+            os.makedirs(dir, exist_ok=True)
         for tile in self.tile_maps:
             if self.tile_maps[tile] is not None:
                 self.tile_maps[tile].save(f"{dir}/{tile}.png")
