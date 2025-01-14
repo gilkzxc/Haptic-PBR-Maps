@@ -52,18 +52,18 @@ def runCycle(tasks_pipe, dms_pipeline, sm_diffuser, mf_diffuser):
     return new_pipe
 
 
-def getPrompt():
+def getPrompt(output_folder):
     prompt_type = questionary.select("Type of prompt:",choices=tasks.prompt_types).ask()
     if prompt_type == tasks.prompt_types[0] or prompt_type == tasks.prompt_types[1]:
         file_folder_path = questionary.path("Enter path: ").ask()
-        return tasks.Task(file_folder_path)
+        return tasks.Task(prompt_input=file_folder_path,output_parent_dir=output_folder)
     elif prompt_type == tasks.prompt_types[2]:
         url_path = input("Enter url path: ")
-        return tasks.Task(url_path)
+        return tasks.Task(prompt_input=url_path,output_parent_dir=output_folder)
     
     # Free text
     free_text = input("Enter text: ")
-    return tasks.Task(free_text)
+    return tasks.Task(prompt_input=free_text,output_parent_dir=output_folder)
         
 def main(args):
     print("Welcome to Haptic PBR Generator")
@@ -76,7 +76,7 @@ def main(args):
     Tasks = deque([])
     while run:
         if yes_no_question("Skip prompt?") == "No":
-            Tasks.append(getPrompt())
+            Tasks.append(getPrompt(output_folder=args.output_folder))
         Tasks = runCycle(Tasks, dms_pipeline, sm_diffuser, mf_diffuser)
         run = len(Tasks) > 0
     print("Exiting Haptic PBR Generator")
