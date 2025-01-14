@@ -179,6 +179,7 @@ class Task:
                         print("Error in child. Deleting parent and it's children output.")
                         return False
                 print("Done children...")
+                return True
             else:
                 print(f"{self.prompt_text.value} is an empty directory.")
                 return False
