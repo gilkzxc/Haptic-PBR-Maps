@@ -117,6 +117,9 @@ class Task:
                         makedirs(self.output_dir, exist_ok=True)
                         image = load_image(self.prompt_text.value)
                         image_file_path = self.prompt_text.value
+                        if self.prompt_text.type == prompt_types[2]: #Url
+                            image_file_path = f"{self.output_dir}/prompt_url_to_prompt_image.png"
+                            image.save(image_file_path)
                     self.prompt_image = {"path":image_file_path, "image":image}
                 except ValueError as e:
                     print(f"A ValueError occurred: {e}")
@@ -182,6 +185,7 @@ class Task:
         elif self.isTaskImage():
             sm_gen = {}
             if not self.prompt_image is None:
+                print(f"Prompt: {self.prompt_text.value} , StableMaterials Image prompt mode.")
                 sm_gen["image"] = sm_diffuser.generator(self.prompt_image["path"])
                 if not sm_gen["image"] is None:
                     sm_gen["image"].save(f"{self.output_dir}/sm/image")
@@ -199,6 +203,7 @@ class Task:
         elif self.isTaskFreeText():
             sm_gen = {}
             if not self.prompt_image is None:
+                print(f"Prompt: {self.prompt_text.value} , StableMaterials Image prompt mode.")
                 sm_gen["image"] = sm_diffuser.generator(self.prompt_image["path"])
                 if not sm_gen["image"] is None:
                     sm_gen["image"].save(f"{self.output_dir}/sm/image")
@@ -206,6 +211,7 @@ class Task:
                     print(f"Prompt: {self.prompt_text.value} , Error StableMaterials failed in image prompt.")
             else:
                 print(f"Prompt: {self.prompt_text.value} , Error StableMaterials failed in image prompt.")
+            print(f"Prompt: {self.prompt_text.value} , StableMaterials Text prompt mode.")
             sm_gen["text"] = sm_diffuser.generator(self.prompt_text.value)
             if not sm_gen["text"] is None:
                 sm_gen["text"].save(f"{self.output_dir}/sm/text")

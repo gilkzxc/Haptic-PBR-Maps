@@ -17,7 +17,7 @@ import math
 from PIL import Image
 from collections import deque
 import matplotlib.pyplot as plt
-from os.path import isfile, isdir
+from os.path import isfile
 
 pretrained_path = "./DMS46_v1.pt"
 
@@ -43,12 +43,8 @@ class infered_image:
     def __init__(self,image_path,output_folder_path):
         self.image_path = image_path
         self.output_folder_path = output_folder_path
-        try:
-            img = cv2.imread(image_path, cv2.IMREAD_COLOR)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        except:
-            print(f"""Inside DMS, ERROR in image: {image_path}
-            Isfile={isfile(image_path)} , Dir={output_folder_path}, IsDir={isdir(output_folder_path)}""")
+        img = cv2.imread(image_path, cv2.IMREAD_COLOR)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         new_dim = 512
         h, w = img.shape[0:2]
         scale_x = float(new_dim) / float(h)
