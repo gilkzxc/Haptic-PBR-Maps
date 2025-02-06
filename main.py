@@ -49,9 +49,8 @@ def runCycle(tasks_pipe, dms_pipeline, sm_diffuser, mf_diffuser):
             if not run_material_properties_successfull:
                 head.deleteOutput()
                 continue
-        #elif tasks.States[head.nextState] == "Material Properties":
-            # Run in 
         #elif tasks.States[head.nextState] == "Haptic Transform":
+            # Export into Haptic PBR file format .hpbr
             #run in.
         head.nextState += 1
         if head.nextState < len(tasks.States): # Still not finished.

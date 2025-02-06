@@ -186,13 +186,15 @@ class Task:
                 print(f"{self.prompt_text.value} is an empty directory.")
                 return False
 
-        if self.isTaskImage() == False:
-            return False
+        elif self.isTaskImage() or self.isTaskFreeText():
+            if self.material_segmentation:
+                self.material_properties=run_material_properties(self.material_segmentation["material_mapping"],f"{self.output_dir}/MP","output")
+                print("Done...")
+                return True
+        return False
+        
 
-        if  self.material_segmentation is None:
-            return False
-
-        self.material_properties=run_material_properties(self.material_segmentation["material_mapping"],self.prompt_image["path"],"output")
+        
 
     def to_PBR(self,sm_diffuser, mf_diffuser):
         print(f"Prompt: {self.prompt_text.value} , begins PBR tile maps generation.")
