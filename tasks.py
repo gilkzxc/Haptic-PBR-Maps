@@ -8,6 +8,7 @@ from glob import glob
 #from text_to_image import genImage
 from gradio_client import Client
 from shutil import rmtree
+from Materials_DB.material_properties import load_properties_json,run_material_properties
 
 
 def is_valid_url(s):
@@ -83,6 +84,7 @@ class Task:
         self.output_parent_dir = output_parent_dir
         self.children = []
         self.material_segmentation = None
+        self.material_properties = None
         self.PBR = None
         self.nextState = init_state
         try:
@@ -168,6 +170,32 @@ class Task:
             print("Done...")
             return True
         return False
+    def to_material_properties(self):
+        print(f"Prompt: {self.prompt_text.value} , begins material properties maps generation.")
+        if self.isTaskDir():
+            if self.children:
+                print(f"Begin children uploading to pipeline.")
+                for child in self.children:
+                    print(f"Child path: {child.prompt_text.value}")
+                    if not child.to_material_properties():
+                        print("Error in child. Deleting parent and it's children output.")
+                        return False
+                print("Done children...")
+                return True
+            else:
+                print(f"{self.prompt_text.value} is an empty directory.")
+                return False
+
+        elif self.isTaskImage() or self.isTaskFreeText():
+            if self.material_segmentation:
+                self.material_properties=run_material_properties(self.material_segmentation["material_mapping"],f"{self.output_dir}/MP","output")
+                print("Done...")
+                return True
+        return False
+        
+
+        
+
     def to_PBR(self,sm_diffuser, mf_diffuser):
         print(f"Prompt: {self.prompt_text.value} , begins PBR tile maps generation.")
         if self.isTaskDir():

@@ -12,6 +12,7 @@ import cv2
 import os
 #from tasks import Task, prompt_types
 import tasks
+from Materials_DB.material_properties import load_properties_json
 
 Types = ["text","image","PBR","rendered_PBR"]
             
@@ -42,9 +43,14 @@ def runCycle(tasks_pipe, dms_pipeline, sm_diffuser, mf_diffuser):
             if not run_material_segmentation_successfull:
                 head.deleteOutput()
                 continue
-        #elif tasks.States[head.nextState] == "Material Properties":
-            # Run in 
+        elif tasks.States[head.nextState] == "Material Properties":
+            # Run in dms segmentation.
+            run_material_properties_successfull = head.to_material_properties()
+            if not run_material_properties_successfull:
+                head.deleteOutput()
+                continue
         #elif tasks.States[head.nextState] == "Haptic Transform":
+            # Export into Haptic PBR file format .hpbr
             #run in.
         head.nextState += 1
         if head.nextState < len(tasks.States): # Still not finished.
@@ -67,6 +73,7 @@ def getPrompt(output_folder):
         
 def main(args):
     print("Welcome to Haptic PBR Generator")
+    load_properties_json(args.properties_json)
     run = True
     dms_pipeline = ml_dms_dataset.infering_pipeline(args.pretrained_dms_path)
     sm_diffuser = StableMaterials.PBR_Diffuser()
@@ -92,6 +99,12 @@ if __name__ == '__main__':
         type=str,
         default=f'{current_dir}/ml_dms_dataset/DMS46_v1.pt',
         help='path to the pretrained model of DMS',
+    )
+    parser.add_argument(
+        '--properties_json',
+        type=str,
+        default=f'{current_dir}/Material_DB/material_DB.json',
+        help='path to the properties DB',
     )
     parser.add_argument(
         '--output_folder',
