@@ -103,7 +103,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--properties_json',
         type=str,
-        default=f'{current_dir}/Material_DB/material_DB.json',
+        default=f'{current_dir}/Materials_DB/material_DB.json',
         help='path to the properties DB',
     )
     parser.add_argument(
