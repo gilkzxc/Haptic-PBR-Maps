@@ -2,20 +2,20 @@
     "Wood": {
         "Tactile Compliance": {
             "Young's Modulus": {
-                "value": null,
-                "units": "Pa, MPa, GPa",
+                "value": 13,
+                "units": "GPa",
                 "haptic_dimension": "hardness",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://teaching.eng.cam.ac.uk/sites/teaching.eng.cam.ac.uk/files/Documents/Databooks/MATERIALS%20DATABOOK%20%282011%29%20version%20for%20Moodle.pdf",
+                "citation": "./ref/Wood/Young's Modulus.png"
             },
             "Poisson's Ratio": {
-                "value": null,
+                "value": 0.05,
                 "units": "None",
                 "haptic_dimension": "hardness",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://github.com/FreeCAD/FreeCAD/blob/main/src/Mod/Material/Resources/Materials/Standard/Wood/Wood-Generic.FCMat",
+                "citation": "./ref/Wood/Poisson's Ratio.png"
             }
         },
         "Local Deformation": {
@@ -74,24 +74,24 @@
                 "citation": ""
             }
         },
-        "Tactile Stiction": {
+		"Tactile Stiction": {
             "Coefficient of Static Friction": {
-                "value": null,
+                "value": 0.25,
                 "units": "dimensionless",
                 "haptic_dimension": "friction",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://mechguru.com/machine-design/typical-coefficient-of-friction-values-for-common-materials/",
+                "citation": "./ref/Wood/friction.png"
             }
         },
         "Sliding Resistance": {
             "Coefficient of Kinetic Friction": {
-                "value": null,
+                "value": 0.129,
                 "units": "dimensionless",
                 "haptic_dimension": "friction",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://mechguru.com/machine-design/typical-coefficient-of-friction-values-for-common-materials/",
+                "citation": "./ref/Wood/friction.png"
             }
         },
         "Adhesive Tack": {
@@ -122,14 +122,14 @@
                 "citation": ""
             }
         },
-        "Macro Roughness": {
+		    "Macro Roughness": {
             "Roughness Parameters": {
-                "value": null,
-                "units": "\u00b5m",
+                "value": 110.9,
+                "units": "um",
                 "haptic_dimension": "macroscopic roughness",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://www.researchgate.net/publication/280555352_Effects_of_four_surfacing_methods_on_surface_properties_and_coating_performance_of_red_oak_wood",
+                "citation": "./ref/Wood/roughness.png"
             }
         },
         "Macro Regularity": {
@@ -205,22 +205,22 @@
     },
     "Metal": {
         "Tactile Compliance": {
-            "Young's Modulus": {
-                "value": null,
-                "units": "Pa, MPa, GPa",
-                "haptic_dimension": "hardness",
-                "condition_value_map": {},
-                "source": "",
-                "citation": ""
-            },
-            "Poisson's Ratio": {
-                "value": null,
-                "units": "None",
-                "haptic_dimension": "hardness",
-                "condition_value_map": {},
-                "source": "",
-                "citation": ""
-            }
+          "Young's Modulus": {
+            "value": 75,
+            "units": "GPa",
+            "haptic_dimension": "hardness",
+            "condition_value_map": {},
+            "source": "https://teaching.eng.cam.ac.uk/sites/teaching.eng.cam.ac.uk/files/Documents/Databooks/MATERIALS%20DATABOOK%20%282011%29%20version%20for%20Moodle.pdf",
+            "citation": "./ref/Metal(Aluminum)/Young's Modulus.png"
+          },
+          "Poisson's Ratio": {
+            "value": 0.35,
+            "units": "None",
+            "haptic_dimension": "hardness",
+            "condition_value_map": {},
+            "source": "https://github.com/FreeCAD/FreeCAD/blob/main/src/Mod/Material/Resources/Materials/Standard/Metal/Aluminum/Aluminum-Generic.FCMat",
+            "citation": "./ref/Metal(Aluminum)/Poisson's Ratio.png"
+          }
         },
         "Local Deformation": {
             "Displacement": {
@@ -278,24 +278,24 @@
                 "citation": ""
             }
         },
-        "Tactile Stiction": {
+		"Tactile Stiction": {
             "Coefficient of Static Friction": {
-                "value": null,
+                "value": 0.5,
                 "units": "dimensionless",
                 "haptic_dimension": "friction",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://pressbooks.bccampus.ca/introductorygeneralphysics1phys1107/chapter/5-1-friction/",
+                "citation": "./ref/Metal(Aluminum)/friction.png"
             }
         },
         "Sliding Resistance": {
             "Coefficient of Kinetic Friction": {
-                "value": null,
+                "value": 0.3,
                 "units": "dimensionless",
                 "haptic_dimension": "friction",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://pressbooks.bccampus.ca/introductorygeneralphysics1phys1107/chapter/5-1-friction/",
+                "citation": "./ref/Metal(Aluminum)/friction.png"
             }
         },
         "Adhesive Tack": {
@@ -326,14 +326,14 @@
                 "citation": ""
             }
         },
-        "Macro Roughness": {
+		"Macro Roughness": {
             "Roughness Parameters": {
-                "value": null,
-                "units": "\u00b5m",
+                "value": 0.000045,
+                "units": "m",
                 "haptic_dimension": "macroscopic roughness",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://www.academia.edu/11742067/RULES_OF_THUMB_FOR_CHEMICAL_ENGINEERS",
+                "citation": "./ref/Metal(Aluminum)/roughness.png"
             }
         },
         "Macro Regularity": {
@@ -410,20 +410,20 @@
     "Stone": {
         "Tactile Compliance": {
             "Young's Modulus": {
-                "value": null,
-                "units": "Pa, MPa, GPa",
+                "value": 44,
+                "units": "GPa",
                 "haptic_dimension": "hardness",
                 "condition_value_map": {},
-                "source": "https://material-properties.org/granite",
-                "citation": ""
+                "source": "https://civilblog.org/2015/02/13/what-are-the-values-of-modulus-of-elasticity-poissons-ratio-for-different-rocks/",
+                "citation": "./ref/Stone/Young's Modulus.png"
             },
             "Poisson's Ratio": {
-                "value": null,
+                "value": 0.15,
                 "units": "None",
                 "haptic_dimension": "hardness",
                 "condition_value_map": {},
-                "source": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
-                "citation": ""
+                "source": "https://civilblog.org/2015/02/13/what-are-the-values-of-modulus-of-elasticity-poissons-ratio-for-different-rocks/",
+                "citation": "./ref/Stone/Poisson's Ratio.png"
             }
         },
         "Local Deformation": {
@@ -482,14 +482,14 @@
                 "citation": ""
             }
         },
-        "Tactile Stiction": {
+		"Tactile Stiction": {
             "Coefficient of Static Friction": {
-                "value": null,
+                "value": 0.3,
                 "units": "dimensionless",
                 "haptic_dimension": "friction",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://www.engineeringtoolbox.com/friction-coefficients-d_778.html",
+                "citation": "./ref/Stone/friction.png"
             }
         },
         "Sliding Resistance": {
@@ -530,14 +530,14 @@
                 "citation": ""
             }
         },
-        "Macro Roughness": {
+		"Macro Roughness": {
             "Roughness Parameters": {
-                "value": null,
-                "units": "\u00b5m",
+                "value": 39.4,
+                "units": "um",
                 "haptic_dimension": "macroscopic roughness",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://repository.si.edu/bitstream/handle/10088/43852/Grissom%20etal.%20Roughness%20%20Studies%20Cons%202000%20%281%29.pdf?sequence=1&isAllowed=y",
+                "citation": "./ref/Stone/roughness.png"
             }
         },
         "Macro Regularity": {
@@ -622,12 +622,12 @@
                 "citation": ""
             },
             "Poisson's Ratio": {
-                "value": null,
+                "value": 1.2,
                 "units": "None",
                 "haptic_dimension": "hardness",
                 "condition_value_map": {},
-                "source": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
-                "citation": ""
+                "source": "https://www.researchgate.net/publication/235652490_Development_of_an_image_analysis_technique_for_measurement_of_Poisson's_ratio_for_viscoelastic_materials_Application_to_leather",
+                "citation": "./ref/Leather/Poisson's Ratio.png"
             }
         },
         "Local Deformation": {
@@ -686,24 +686,24 @@
                 "citation": ""
             }
         },
-        "Tactile Stiction": {
+		"Tactile Stiction": {
             "Coefficient of Static Friction": {
-                "value": null,
+                "value": 0.61,
                 "units": "dimensionless",
                 "haptic_dimension": "friction",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://mechguru.com/machine-design/typical-coefficient-of-friction-values-for-common-materials/",
+                "citation": "./ref/Leather/friction.png"
             }
         },
         "Sliding Resistance": {
             "Coefficient of Kinetic Friction": {
-                "value": null,
+                "value": 0.52,
                 "units": "dimensionless",
                 "haptic_dimension": "friction",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://mechguru.com/machine-design/typical-coefficient-of-friction-values-for-common-materials/",
+                "citation": "./ref/Leather/friction.png"
             }
         },
         "Adhesive Tack": {
@@ -734,14 +734,14 @@
                 "citation": ""
             }
         },
-        "Macro Roughness": {
+		"Macro Roughness": {
             "Roughness Parameters": {
-                "value": null,
-                "units": "\u00b5m",
+                "value": 8.4,
+                "units": "um",
                 "haptic_dimension": "macroscopic roughness",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://www.researchgate.net/publication/336128451_CNC_milling_of_EVA_foam_with_varying_hardness_for_custom_orthotic_shoe_insoles_and_process_parameter_optimization",
+                "citation": "./ref/Leather/roughness.png"
             }
         },
         "Macro Regularity": {
@@ -826,12 +826,12 @@
                 "citation": ""
             },
             "Poisson's Ratio": {
-                "value": null,
+                "value": 0.5,
                 "units": "None",
                 "haptic_dimension": "hardness",
                 "condition_value_map": {},
-                "source": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
-                "citation": ""
+                "source": "https://journals.sagepub.com/doi/full/10.1177/1558925019856225",
+                "citation": "./ref/Fabric/Poisson's Ratio.png"
             }
         },
         "Local Deformation": {
@@ -890,24 +890,24 @@
                 "citation": ""
             }
         },
-        "Tactile Stiction": {
+		"Tactile Stiction": {
             "Coefficient of Static Friction": {
-                "value": null,
+                "value": 0.29,
                 "units": "dimensionless",
                 "haptic_dimension": "friction",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://physics.info/friction/",
+                "citation": "./ref/Fabric/friction.png"
             }
         },
         "Sliding Resistance": {
             "Coefficient of Kinetic Friction": {
-                "value": null,
+                "value": 0.22,
                 "units": "dimensionless",
                 "haptic_dimension": "friction",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://physics.info/friction/",
+                "citation":  "./ref/Fabric/friction.png"
             }
         },
         "Adhesive Tack": {
@@ -938,14 +938,14 @@
                 "citation": ""
             }
         },
-        "Macro Roughness": {
+		"Macro Roughness": {
             "Roughness Parameters": {
-                "value": null,
-                "units": "\u00b5m",
+                "value": 125.9,
+                "units": "um",
                 "haptic_dimension": "macroscopic roughness",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://journals.sagepub.com/doi/pdf/10.1177/155892501501000419",
+                "citation":  "./ref/Fabric/roughness.png"
             }
         },
         "Macro Regularity": {
@@ -1022,20 +1022,20 @@
     "Concrete": {
         "Tactile Compliance": {
             "Young's Modulus": {
-                "value": null,
-                "units": "Pa, MPa, GPa",
+                "value": 20,
+                "units": "GPa",
                 "haptic_dimension": "hardness",
                 "condition_value_map": {},
                 "source": "https://material-properties.org/concrete",
-                "citation": ""
+                "citation": "./ref/Concrete/Young's Modulus.png"
             },
             "Poisson's Ratio": {
-                "value": null,
+                "value": 0.17,
                 "units": "None",
                 "haptic_dimension": "hardness",
                 "condition_value_map": {},
-                "source": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
-                "citation": ""
+                "source": "https://github.com/FreeCAD/FreeCAD/blob/main/src/Mod/Material/Resources/Materials/Standard/Aggregate/Concrete-Generic.FCMat",
+                "citation": "./ref/Concrete/Poisson's Ratio.png"
             }
         },
         "Local Deformation": {
@@ -1094,14 +1094,14 @@
                 "citation": ""
             }
         },
-        "Tactile Stiction": {
+		"Tactile Stiction": {
             "Coefficient of Static Friction": {
-                "value": null,
+                "value": 0.61,
                 "units": "dimensionless",
                 "haptic_dimension": "friction",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://mechguru.com/machine-design/typical-coefficient-of-friction-values-for-common-materials/",
+                "citation": "./ref/Concrete/friction.png"
             }
         },
         "Sliding Resistance": {
@@ -1144,12 +1144,12 @@
         },
         "Macro Roughness": {
             "Roughness Parameters": {
-                "value": null,
-                "units": "\u00b5m",
+                "value": 0.0003,
+                "units": "m",
                 "haptic_dimension": "macroscopic roughness",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://www.academia.edu/11742067/RULES_OF_THUMB_FOR_CHEMICAL_ENGINEERS",
+                "citation": "./ref/Concrete/roughness.png"
             }
         },
         "Macro Regularity": {
@@ -1227,7 +1227,7 @@
         "Tactile Compliance": {
           "Young's Modulus": {
             "value": 416,
-            "units": "Pa, MPa, GPa",
+            "units": "GPa",
             "haptic_dimension": "hardness",
             "condition_value_map": {},
             "source": "https://srdata.nist.gov/CeramicDataPortal/Pds/Scdaos",
@@ -1300,12 +1300,13 @@
         },
         "Tactile Stiction": {
             "Coefficient of Static Friction": {
-                "value": null,
+                "value": 0.6,
                 "units": "dimensionless",
                 "haptic_dimension": "friction",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://physics.info/friction/",
+                "citation":  "./ref/Ceramic/friction.png",
+                "comment": "We used brick as an approximation sice there wasn't data available of wood and ceramic"
             }
         },
         "Sliding Resistance": {
@@ -1314,7 +1315,7 @@
             "units": "dimensionless",
             "haptic_dimension": "friction",
             "condition_value_map": {},
-            "source": "https://srdata.nist.gov/CeramicDataPortal/Pds/Scdaos",
+            "source": "",
             "citation": ""
           }
         },
@@ -1346,14 +1347,14 @@
                 "citation": ""
             }
         },
-        "Macro Roughness": {
+		"Macro Roughness": {
             "Roughness Parameters": {
-                "value": null,
-                "units": "\u00b5m",
+                "value": 0.8,
+                "units": "um",
                 "haptic_dimension": "macroscopic roughness",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://www.researchgate.net/publication/6863232_Surface_Roughness_in_Ceramics_with_Different_Finishing_Techniques_Using_Atomic_Force_Microscope_and_Profilometer",
+                "citation": "./ref/Ceramic/roughness.png"
             }
         },
         "Macro Regularity": {
@@ -1430,20 +1431,20 @@
     "Soil": {
         "Tactile Compliance": {
             "Young's Modulus": {
-                "value": null,
-                "units": "Pa, MPa, GPa",
+                "value": 20,
+                "units": "MPa",
                 "haptic_dimension": "hardness",
                 "condition_value_map": {},
-                "source": "https://www.geotechdata.info/parameter/soil-elastic-modulus.html",
-                "citation": ""
+                "source": "https://environment.uwe.ac.uk/geocal/SoilMech/basic/stiffness.htm",
+                "citation": "./ref/Soil/Young's Modulu.png"
             },
             "Poisson's Ratio": {
-                "value": null,
+                "value": 0.25,
                 "units": "None",
                 "haptic_dimension": "hardness",
                 "condition_value_map": {},
-                "source": "https://www.engineeringtoolbox.com/poissons-ratio-d_1224.html",
-                "citation": ""
+                "source": "https://www.researchgate.net/publication/344811412_Poisson's_Ratio_Characteristic_Curve_of_Unsaturated_Soils",
+                "citation": "./ref/Soil/Poisson's Ratio.png"
             }
         },
         "Local Deformation": {
@@ -1550,14 +1551,14 @@
                 "citation": ""
             }
         },
-        "Macro Roughness": {
+		"Macro Roughness": {
             "Roughness Parameters": {
-                "value": null,
-                "units": "\u00b5m",
+                "value": 1.78,
+                "units": "cm",
                 "haptic_dimension": "macroscopic roughness",
                 "condition_value_map": {},
-                "source": "",
-                "citation": ""
+                "source": "https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/soil-surface-roughness",
+                "citation": "./ref/Soil/roughness.png"
             }
         },
         "Macro Regularity": {
