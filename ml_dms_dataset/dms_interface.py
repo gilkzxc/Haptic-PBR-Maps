@@ -101,7 +101,6 @@ class infered_image:
                 for material_index in range(len(inference.t['srgb_colormap'])):
                     if np.array_equal(rgb_array,inference.t['srgb_colormap'][material_index]):
                         if not material_index in stats["materials"]:
-                            #stats["materials"][material_index] = {"name":inference.t['names'][material_index],
                             stats["materials"][material_index] = {"name":inference.t['shortnames'][material_index],
                                                                                      "rgb_color":inference.t['srgb_colormap'][material_index],
                                                                                     "num_of_pixels":0}
@@ -127,44 +126,35 @@ class infered_image:
         ax.set_ylabel('pixel count')
         ax.set_xlabel('Materials')
         ax.set_title('Pixel histogram for each material')
-        #fig.set_size_inches((d/fig.dpi for d in self.img.shape[:2][::-1]))
         plt.show()
         fig.canvas.draw()
         rgb = rgba2rgb(np.array(fig.canvas.buffer_rgba()))
         cv2.imwrite(f'~/output3/{os.path.splitext(os.path.basename(self.image_path))[0]}.png'
                     ,rgb[..., ::-1],)
         self.histogram_img_plot = rgb
-        #self.histogram_img_plot = rgba2rgb(np.array(fig.canvas.buffer_rgba()))
         return self.histogram_img_plot
         
     
-    #def write_concate_results(self,output_folder_path):
+
     def write_concate_results(self):
         #OpenCV Works in a BGR format. Thus we need to flip.
         if self.was_predicted():
-            #original_img = np.uint8(self.img[..., ::-1])
             original_img = self.img
             if isinstance(original_img,np.ndarray):
-                #estimated_colors = self.estimated_colors[..., ::-1]
                 estimated_colors = self.estimated_colors
                 if isinstance(estimated_colors,np.ndarray):
-                    #histogram = self.histogram_img_plot[..., ::-1]
                     histogram = self.histogram_img_plot
                     if isinstance(histogram,np.ndarray):
                         stacked_img = np.concatenate((original_img, estimated_colors,histogram), axis=1)
-                        #cv2.imwrite(f'{output_folder_path}/{os.path.splitext(os.path.basename(self.image_path))[0]}.png',stacked_img,)
                         os.makedirs(self.output_folder_path, exist_ok=True)
-                        #cv2.imwrite(f'{output_folder_path}/{os.path.splitext(os.path.basename(self.image_path))[0]}.png',cv2.cvtColor(stacked_img, cv2.COLOR_RGB2BGR),)
                         cv2.imwrite(f'{self.output_folder_path}/{os.path.splitext(os.path.basename(self.image_path))[0]}.png',cv2.cvtColor(stacked_img, cv2.COLOR_RGB2BGR),)
             
             
 
 class infering_pipeline:
-    #def __init__(self,model_path,output_folder_path,parameters = inference.parameters):
     def __init__(self,model_path,parameters = inference.parameters):    
         self.mean = parameters["mean"]
         self.std = parameters["std"]
-        #self.output_folder_path = output_folder_path
         self.is_cuda = torch.cuda.is_available()
         self.model = torch.jit.load(model_path)
         if self.is_cuda:
@@ -180,7 +170,6 @@ class infering_pipeline:
             infered_image_obj = args[0]
         else:
             return None
-        #os.makedirs(self.output_folder_path, exist_ok=True)
         result = {}
         print(f"Image {infered_image_obj.image_path} : Running Material Segmentation model...")
         result["estimation_color"] = infered_image_obj.estimation(self.is_cuda,self.model,self.mean,self.std)
@@ -192,7 +181,6 @@ class infering_pipeline:
         result["object"] = infered_image_obj
         return result
     def run_pipeline(self): #Runs multiple material segmentation tasks
-        #os.makedirs(self.output_folder_path, exist_ok=True)
         while len(self.pipeline_to_infer) > 0:
             head = self.pipeline_to_infer.popleft()
             run_singleton_result = self.run_singleton(head)
@@ -227,7 +215,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     images_list = glob.glob(f'{args.image_folder}/*')
     print("Initiating pipelines.")
-    #test_pipe = infering_pipeline(args.pretrained_path,args.output_folder)
     test_pipe = infering_pipeline(args.pretrained_path)
     print("Inserting images into pipelines.")
     for image_path in images_list:

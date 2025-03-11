@@ -51,6 +51,8 @@ def create_maps(predicted_map):
     return dict
 
 def create_property_map(pixel_array, type, name):
+    if isinstance(pixel_array, list):
+        pixel_array = np.array(pixel_array)
     new_array = np.zeros_like(pixel_array, dtype=float)
     rows, cols = pixel_array.shape
     for i in range(rows):
