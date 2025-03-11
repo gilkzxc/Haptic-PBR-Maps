@@ -9,7 +9,7 @@ from glob import glob
 from gradio_client import Client
 from shutil import rmtree
 from Materials_DB.material_properties import load_properties_json,run_material_properties
-
+from Haptic_Transform import hPBR
 
 def is_valid_url(s):
     try:
@@ -126,18 +126,23 @@ class Task:
                 except ValueError as e:
                     print(f"A ValueError occurred: {e}")
                     self.prompt_image = None
+
     def isTaskDir(self):
         return (self.prompt_text is not None) and (self.prompt_text.type == prompt_types[0])
+
     def isTaskImage(self):
         return (self.prompt_text is not None) and (self.prompt_text.type == prompt_types[1] or self.prompt_text.type == prompt_types[2]) and (self.prompt_image is not None)
+
     def isTaskFreeText(self):
         return (self.prompt_text is not None) and (self.prompt_text.type == prompt_types[-1]) and (self.prompt_image is not None)
+
     def deleteOutput(self):
         try:
             rmtree(self.output_dir)
             print(f'Folder {self.output_dir} and its content removed') # Folder and its content removed
         except:
             print(f'Folder {self.output_dir} not deleted')
+
     def to_material_segmentation(self,dms_pipeline):
         print(f"Prompt: {self.prompt_text.value} , begins Material Segmentation.")
         if self.isTaskDir():
@@ -170,6 +175,7 @@ class Task:
             print("Done...")
             return True
         return False
+
     def to_material_properties(self):
         print(f"Prompt: {self.prompt_text.value} , begins material properties maps generation.")
         if self.isTaskDir():
@@ -192,9 +198,6 @@ class Task:
                 print("Done...")
                 return True
         return False
-        
-
-        
 
     def to_PBR(self,sm_diffuser, mf_diffuser):
         print(f"Prompt: {self.prompt_text.value} , begins PBR tile maps generation.")
@@ -252,5 +255,23 @@ class Task:
                 return True
             return False
 
+    def to_HapticTransform(self):
+        print(f"Prompt: {self.prompt_text.value} , begins Haptic transform.")
+        if self.isTaskDir():
+            if self.children:
+                print(f"Begin children uploading to pipeline.")
+                for child in self.children:
+                    print(f"Child path: {child.prompt_text.value}") 
+                    child.to_HapticTransform()
+                print("Done children...")
+
+        elif self.isTaskImage() or self.isTaskFreeText():
+            for prompt_type in self.PBR["SM"]:
+                result = hPBR(f"{self.output_dir}/{prompt_type}_prompt.hpbr",self.material_properties, self.PBR["SM"][prompt_type])
+                result.transform()
+                # Maybe verification?
+        print("Done...")
+        
+            
         
         
