@@ -14,6 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+key_translator = {"Fabric\ncloth":"Fabric", "Soil/mud":"Soil", "Stone\nnatural":"Stone", "Stone\npolished":"Stone", "Wood\ntree":"Wood"}
 
 def load_properties_json(db_path):
     global material_properties_dict
@@ -57,8 +58,11 @@ def create_property_map(pixel_array, type, name):
     rows, cols = pixel_array.shape
     for i in range(rows):
         for j in range(cols):
-            characteristics = material_properties_dict.get(pixel_array[i, j], None)
-            if characteristics:
+            if pixel_array[i, j] in material_properties_dict:
+                characteristics = material_properties_dict[pixel_array[i, j]]
+                new_array[i, j] = characteristics[type][name]["value"]
+            elif pixel_array[i, j] in key_translator:
+                characteristics = material_properties_dict[key_translator[pixel_array[i, j]]]
                 new_array[i, j] = characteristics[type][name]["value"]
             else:
                 new_array[i, j] = np.nan

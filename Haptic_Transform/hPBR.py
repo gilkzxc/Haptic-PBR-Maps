@@ -4,6 +4,7 @@ import numpy as np
 from PIL import Image
 import hashlib
 import zlib
+import os
 
 
 magic_num = bytes([0x68,0x50,0x42,0x52]) # "hPBR".encode().hex()
@@ -21,13 +22,33 @@ class hPBR:
             f.write(magic_num)
             f.write(bytes([version]))
             for prop in self.material_prop:
-                payload = self.numpy_array_payload_generator(self.material_prop[prop])
-                self.write_chunk(f,b"NARR",prop,payload)
+                if isinstance(self.material_prop[prop], np.ndarray):
+                    payload = self.numpy_array_payload_generator(self.material_prop[prop])
+                    self.write_chunk(f,b"NARR",prop,payload)
             for tile_map in self.pbr.tile_maps:
-                payload = self.image_payload_generator(self.pbr.tile_maps[tile_map])
-                self.write_chunk(f,b"IMAG",tile_map,payload)
+                if isinstance(self.pbr.tile_maps[tile_map], Image.Image):
+                    payload = self.image_payload_generator(self.pbr.tile_maps[tile_map])
+                    self.write_chunk(f,b"IMAG",tile_map,payload)
 
         self.append_integrity_hash()
+
+    """def fromFile(self, file_path):
+        if not verify_file(file_path):
+            raise ValueError(f"File: {file_path} isn't hPBR format.")
+
+        self.material_prop = {}
+        self.pbr = None
+
+        try:
+            with open(file_path, 'rb') as f:
+            for tag, name, payload in self.read_chunks(f):
+
+        except ValueError as e:
+
+
+        self.path = file_path"""
+
+
     def write_chunk(self, f, tag, name, payload):
 
         # Tag: e.g. b"NARR" or b"IMAG" (4 bytes)
@@ -58,6 +79,53 @@ class hPBR:
         f.write(struct.pack('<I', chunk_length))
         f.seek(end_pos)
 
+    def read_chunks(self, f):
+        """
+        Reads chunk after chunk until EOF.
+        Verifies the CRC of each chunk's payload.
+        Yields (tag, name, payload) tuples if CRC is valid.
+        Raises ValueError if a CRC mismatch occurs.
+        """
+        while True:
+            tag = f.read(4)
+            if not tag:
+                # Reached EOF
+                break
+
+            chunk_len_bytes = f.read(4)
+            if not chunk_len_bytes or len(chunk_len_bytes) < 4:
+                # Incomplete data (corrupt or unexpected EOF)
+                raise ValueError("File ended unexpectedly while reading chunk length.")
+            chunk_length = struct.unpack('<I', chunk_len_bytes)[0]
+
+            name_len_data = f.read(1)
+            if not name_len_data:
+                raise ValueError("File ended unexpectedly while reading name length.")
+            name_len = struct.unpack('B', name_len_data)[0]
+
+            name_data = f.read(name_len)
+            if len(name_data) < name_len:
+                raise ValueError("File ended unexpectedly while reading name.")
+
+            name = name_data.decode('utf-8')
+            payload_size = chunk_length - 4
+            if payload_size < 0:
+                raise ValueError(f"Invalid chunk length: {chunk_length}")
+
+            payload = f.read(payload_size)
+            if len(payload) < payload_size:
+                raise ValueError(f"Incomplete data for payload of '{name}' chunk.")
+
+            crc_data = f.read(4)
+            if len(crc_data) < 4:
+                raise ValueError("File ended unexpectedly while reading CRC.")
+            stored_crc = struct.unpack('<I', crc_data)[0]
+            computed_crc = zlib.crc32(payload) & 0xffffffff
+            if computed_crc != stored_crc:
+                raise ValueError(f"CRC mismatch for chunk '{name}'. "
+                                 f"Expected 0x{stored_crc:08X}, got 0x{computed_crc:08X}.")
+            yield (tag, name, payload)
+
     # Expected payload, no bigger than 4GB.
     def image_payload_generator(self, img):
         buf = BytesIO()
@@ -66,6 +134,14 @@ class hPBR:
 
         header = struct.pack('B', 1) # 1-byte format code = 1 for PNG
         return header + raw_data
+
+    def image_payload_parser(self, payload):
+        format_code = payload[0]
+        raw_data = payload[1:]
+        if format_code == 1:
+            # PNG
+            return Image.open(BytesIO(raw_data))
+        raise ValueError(f"Unsupported image format code {format_code}")
 
     def numpy_array_payload_generator(self, narr):
 
@@ -91,6 +167,24 @@ class hPBR:
         data = narr.tobytes(order='C')
         return header + data
 
+    def numpy_payload_parser(payload):
+    
+        # read first 4+4+1 = 9 bytes for (rows, cols, dtype_code)
+        rows, cols, code = struct.unpack('<IIb', payload[:9])
+        
+        dtype_map = {
+            1: np.float32,
+            2: np.float64,
+            3:  np.int32,
+            4:  np.int64
+        }
+        dtype = dtype_map.get(code, None)
+        if dtype is None:
+            raise ValueError(f"Unknown dtype code {code}")
+
+        data = payload[9:]
+        arr = np.frombuffer(data, dtype=dtype).reshape((rows, cols), order='C')
+        return arr
 
     def append_integrity_hash(self):
         """
@@ -109,3 +203,30 @@ class hPBR:
         # Appending the 32B sha256 hash to the end of the file.
         with open(self.path, 'ab') as f:
             f.write(hashed.digest())
+    
+def verify_file(filepath):
+
+    filesize = os.path.getsize(filepath)
+    if filesize < 32:
+        return False
+
+       
+    with open(filepath, 'rb') as f:
+        f.seek(filesize - 32)
+        stored_hash = f.read(32)
+
+    
+    sha256_hash = hashlib.sha256()
+    with open(filepath, 'rb') as f:
+        bytes_to_read = filesize - 32
+        for chunk in iter(lambda: f.read(4096 if bytes_to_read > 4096 else bytes_to_read), b''):
+            if not chunk:
+                break
+            sha256_hash.update(chunk)
+            bytes_to_read -= len(chunk)
+
+    computed_hash = sha256_hash.digest()
+
+    return computed_hash == stored_hash
+    
+        
