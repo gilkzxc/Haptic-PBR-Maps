@@ -101,7 +101,7 @@ class hPBR:
         
         hashed = hashlib.sha256()
         with open(self.path, 'rb') as f:
-            chunk = f.read(4096) #Remember we are around 4B chunks.
+            chunk = f.read(4096) # Reading 4KB chuncks as a usual page size.
             while chunk:
                 hashed.update(chunk)
                 chunk = f.read(4096)
