@@ -6,7 +6,7 @@ try:
 except ImportError:
     from PBR import PBR, tile_maps_keys  # Fallback for direct execution
 import glob
-
+import json
 import argparse
 
 # image processing function        
@@ -81,9 +81,14 @@ if __name__ == '__main__':
             simpler_ds[category].append(ds_test[i])
         elif category in key_translator and key_translator[category] in simpler_ds:
             simpler_ds[key_translator[category]].append(ds_test[i])
-    for category in simpler_ds:
+    try:
+        print(json.dumps(simpler_ds))
+    except:
+        print("ERROR1")
+    """for category in simpler_ds:
         for i in range(len(simpler_ds[category])):
             p = PBR({key:simpler_ds[category][i][key] for key in tile_maps_keys})
             name = simpler_ds[category][i]['name']
-            simpler_ds[category][i] = p
-            p.save(f"{args.PBR_path}/{category}/{name}")
+            #simpler_ds[category][i] = p
+            p.save(f"{args.PBR_path}/{category}/{name}")"""
+

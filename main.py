@@ -1,18 +1,19 @@
 #main
 from collections import deque
 
-from PBR_Modules import MatForger, MatSynth, StableMaterials
+from PBR_Modules import PBR, MatForger, MatSynth, StableMaterials
 import ml_dms_dataset
-import PBR_Modules
 import argparse
-
-
+from os.path import isdir, isfile
+import glob
 import questionary
 import cv2
 import os
 #from tasks import Task, prompt_types
 import tasks
 from Materials_DB.material_properties import load_properties_json
+from PIL import Image
+
 
 Types = ["text","image","PBR","rendered_PBR"]
             
@@ -60,10 +61,32 @@ def runCycle(tasks_pipe, dms_pipeline, sm_diffuser, mf_diffuser):
 
 
 def getPrompt(output_folder):
-    prompt_type = questionary.select("Type of prompt:",choices=tasks.prompt_types).ask()
-    if prompt_type == tasks.prompt_types[0] or prompt_type == tasks.prompt_types[1]:
+    prompt_type = questionary.select("Type of prompt:",choices=tasks.prompt_types+["PBR render with tile maps"]).ask()
+    if prompt_type == "PBR render with tile maps":
+        folder_path = questionary.path("Enter path to render and tile maps folder: ").ask()
+        if not isdir(folder_path):
+            raise TypeError(f"{folder_path} isn't a folder.")
+        possible_images_in_folder = [image_path for image_path in glob.glob(os.path.join(folder_path, '*.png')) if isfile(image_path)]
+        tile_maps_paths = []
+        render_path = ""
+        for file in possible_images_in_folder:
+            if os.path.basename(file) == 'render.png':
+                render_path = file
+            else:
+                tile_maps_paths.append(file)
+        if len(possible_images_in_folder) < 1 or not isfile(render_path):
+            raise ValueError(f"{folder_path} isn't a folder in the right format.")
+        new_task_that_skips_PBR_transform = tasks.Task(prompt_input=render_path,output_parent_dir=output_folder, init_state=1)
+        tile_maps = {os.path.basename(file):Image.open(file) for file in tile_maps_paths}
+        new_pbr = PBR(tile_maps)
+        new_pbr.render = Image.open(render_path)
+        new_task_that_skips_PBR_transform.PBR = {"SM":{"image":new_pbr}}
+        return new_task_that_skips_PBR_transform
+
+    elif prompt_type == tasks.prompt_types[0] or prompt_type == tasks.prompt_types[1]:
         file_folder_path = questionary.path("Enter path: ").ask()
         return tasks.Task(prompt_input=file_folder_path,output_parent_dir=output_folder)
+
     elif prompt_type == tasks.prompt_types[2]:
         url_path = input("Enter url path: ")
         return tasks.Task(prompt_input=url_path,output_parent_dir=output_folder)
