@@ -76,7 +76,8 @@ def getPrompt(output_folder):
                 tile_maps_paths.append(file)
         if len(possible_images_in_folder) < 1 or not isfile(render_path):
             raise ValueError(f"{folder_path} isn't a folder in the right format.")
-        new_task_that_skips_PBR_transform = tasks.Task(prompt_input=render_path,output_parent_dir=output_folder, init_state=1)
+        new_output_folder = os.path.join(output_folder, os.path.basename(folder_path))
+        new_task_that_skips_PBR_transform = tasks.Task(prompt_input=render_path,output_parent_dir=new_output_folder, init_state=1)
         tile_maps = {os.path.basename(file):Image.open(file) for file in tile_maps_paths}
         new_pbr = PBR(tile_maps)
         new_pbr.render = Image.open(render_path)
