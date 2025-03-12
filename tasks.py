@@ -270,6 +270,14 @@ class Task:
                 result = hPBR(f"{self.output_dir}/{prompt_type}_prompt.hpbr",self.material_properties, self.PBR["SM"][prompt_type])
                 result.transform()
                 # Maybe verification?
+                """
+                verify_result = hPBR().fromFile(f"{self.output_dir}/{prompt_type}_prompt.hpbr")
+                if verify_result.material_prop == self.material_properties and
+                    self.PBR["SM"][prompt_type].tile_maps == verify_result.pbr.tile_maps:
+                    print(f"{self.output_dir} was saved in hPBR format.")
+                else:
+                    print(f"{self.output_dir} hPBR compiling ERROR.")
+                """
         print("Done...")
         
             

@@ -6,18 +6,22 @@ import hashlib
 import zlib
 import os
 
+from PBR_Modules.PBR import PBR
+
 
 magic_num = bytes([0x68,0x50,0x42,0x52]) # "hPBR".encode().hex()
 
 version = 1
 
 class hPBR:
-    def __init__(self, file_path, material_properties_dict, pbr):
+    def __init__(self, file_path = "", material_properties_dict = {}, pbr = PBR()):
         self.path = file_path
         self.material_prop = material_properties_dict
         self.pbr = pbr
 
     def transform(self):
+        if self.path == "" and self.material_prop:
+            return
         with open(self.path, 'wb') as f:
             f.write(magic_num)
             f.write(bytes([version]))
@@ -32,22 +36,38 @@ class hPBR:
 
         self.append_integrity_hash()
 
-    """def fromFile(self, file_path):
-        if not verify_file(file_path):
+    def fromFile(self, file_path):
+        filesize = os.path.getsize(file_path)
+
+        if not verify_file(file_path,filesize):
             raise ValueError(f"File: {file_path} isn't hPBR format.")
 
-        self.material_prop = {}
-        self.pbr = None
+        material_prop = {}
+        tile_maps = {}
 
-        try:
-            with open(file_path, 'rb') as f:
-            for tag, name, payload in self.read_chunks(f):
+        with open(file_path, 'rb') as f:
+            magicNum = f.read(4)
+            ver = f.read(1)
+            if magicNum != magic_num or ver != bytes([version]):
+                raise ValueError(f"File: {file_path} isn't hPBR format.")
+            try:
+                for tag, name, payload in self.read_chunks(f,filesize):
+                    if tag == b"NARR":
+                        try:
+                            material_prop[name] = self.numpy_payload_parser(payload)
+                        except ValueError as e:
+                            raise ValueError(f"{name} property map is invalid dtype.")
+                    elif tag == b"IMAG":
+                        try:
+                            tile_maps[name] = self.image_payload_parser(payload)
+                        except ValueError as e:
+                            raise ValueError(f"{name} tile map isn't a PNG image.")
+            except ValueError as e:
+                raise ValueError(f"File: {file_path} isn't hPBR format: {e}")
 
-        except ValueError as e:
-
-
-        self.path = file_path"""
-
+        self.path = file_path
+        self.material_prop = material_prop
+        self.pbr = PBR(tile_maps)
 
     def write_chunk(self, f, tag, name, payload):
 
@@ -79,17 +99,17 @@ class hPBR:
         f.write(struct.pack('<I', chunk_length))
         f.seek(end_pos)
 
-    def read_chunks(self, f):
+    def read_chunks(self, f, file_size):
         """
-        Reads chunk after chunk until EOF.
+        Reads chunk after chunk until the position of hash.
         Verifies the CRC of each chunk's payload.
         Yields (tag, name, payload) tuples if CRC is valid.
         Raises ValueError if a CRC mismatch occurs.
         """
-        while True:
+        while f.tell() < file_size - 32:
             tag = f.read(4)
             if not tag:
-                # Reached EOF
+                # Reached end of chunk stream
                 break
 
             chunk_len_bytes = f.read(4)
@@ -167,7 +187,7 @@ class hPBR:
         data = narr.tobytes(order='C')
         return header + data
 
-    def numpy_payload_parser(payload):
+    def numpy_payload_parser(self,payload):
     
         # read first 4+4+1 = 9 bytes for (rows, cols, dtype_code)
         rows, cols, code = struct.unpack('<IIb', payload[:9])
@@ -204,9 +224,9 @@ class hPBR:
         with open(self.path, 'ab') as f:
             f.write(hashed.digest())
     
-def verify_file(filepath):
+def verify_file(filepath, filesize):
 
-    filesize = os.path.getsize(filepath)
+    
     if filesize < 32:
         return False
 

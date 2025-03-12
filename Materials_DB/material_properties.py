@@ -46,10 +46,10 @@ supported_properties = [
 material_properties_dict = None
 
 def create_maps(predicted_map):
-    dict={}
+    properties_maps = {}
     for property in supported_properties:
-        dict[property.label] = create_property_map(predicted_map,property.category,property.name)
-    return dict
+        properties_maps[property.label] = create_property_map(predicted_map,property.category,property.name)
+    return properties_maps
 
 def create_property_map(pixel_array, type, name):
     if isinstance(pixel_array, list):
