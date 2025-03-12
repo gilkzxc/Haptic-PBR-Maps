@@ -1,7 +1,10 @@
 import torchvision.transforms.functional as TF
 from datasets import load_dataset
 from torch.utils.data import DataLoader
-from .PBR import PBR, tile_maps_keys
+try:
+    from .PBR import PBR, tile_maps_keys
+except ImportError:
+    from PBR import PBR, tile_maps_keys  # Fallback for direct execution
 import glob
 
 import argparse
