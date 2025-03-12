@@ -1,8 +1,10 @@
 import torchvision.transforms.functional as TF
 from datasets import load_dataset
 from torch.utils.data import DataLoader
-from .PBR import PBR
+from .PBR import PBR, tile_maps_keys
+import glob
 
+import argparse
 
 # image processing function        
 def process_img(x, scale = 512):
@@ -48,3 +50,37 @@ class MatSynth:
             result[x['name']] = PBR(x)
         return result
         
+if __name__ == '__main__':
+    material_DB_keys = ['Wood', 'Metal', 'Stone', 'Leather', 'Fabric', 'Concrete', 'Ceramic', 'Soil']
+    MatSynth_test_keys = ['Plastic', 'Ground', 'Metal', 'Concrete', 'Terracotta', 'Misc', 'Wood', 'Ceramic', 'Stone', 'Leather', 'Fabric', 'Marble', 'Plaster']
+    key_translator = {"Ground":"Soil", "Soil":"Ground"}
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--test_files',
+        type=str,
+        default="/export/MatSynth/test",
+        help='path to the test files directory',
+    )
+    parser.add_argument(
+        '--PBR_path',
+        type=str,
+        default="/export/PBR",
+        help='path to the test files directory',
+    )
+    args = parser.parse_args()
+    test_files = glob.glob(f"{args.test_files}/*.parquet")
+    MS = MatSynth(local_files={"test":test_files},is_streaming=False)
+    ds_test = MS.dataset['test']
+    simpler_ds = {key:[] for key in material_DB_keys}
+    for i in range(len(ds_test)):
+        category = ds_test[i]['metadata']['category']
+        if category in simpler_ds:
+            simpler_ds[category].append(ds_test[i])
+        elif key_translator[category] in simpler_ds:
+            simpler_ds[key_translator[category]].append(ds_test[i])
+    for category in simpler_ds:
+        for i in range(len(simpler_ds[category])):
+            p = PBR({key:simpler_ds[category][i][key] for key in tile_maps_keys})
+            name = simpler_ds[category][i]['name']
+            simpler_ds[category][i] = p
+            p.save(f"{args.PBR_path}/{category}/{name}")
