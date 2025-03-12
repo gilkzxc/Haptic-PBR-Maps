@@ -75,6 +75,7 @@ if __name__ == '__main__':
     MS = MatSynth(local_files={"test":test_files},is_streaming=False)
     ds_test = MS.dataset['test']
     simpler_ds = {key:[] for key in material_DB_keys}
+    print("Before filling simpler_ds")
     for i in range(len(ds_test)):
         category = ds_test[i]['metadata']['category']
         if category in simpler_ds:
