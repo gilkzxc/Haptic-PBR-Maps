@@ -328,8 +328,8 @@
         },
 		"Macro Roughness": {
             "Roughness Parameters": {
-                "value": 0.000045,
-                "units": "m",
+                "value": 45,
+                "units": "um",
                 "haptic_dimension": "macroscopic roughness",
                 "condition_value_map": {},
                 "source": "https://www.academia.edu/11742067/RULES_OF_THUMB_FOR_CHEMICAL_ENGINEERS",
@@ -613,14 +613,14 @@
     },
     "Leather": {
         "Tactile Compliance": {
-            "Young's Modulus": {
-                "value": null,
-                "units": "Pa, MPa, GPa",
-                "haptic_dimension": "hardness",
-                "condition_value_map": {},
-                "source": "https://material-properties.org/leather",
-                "citation": ""
-            },
+          "Young's Modulus": {
+            "value": 0.072,
+            "units": "GPa",
+            "haptic_dimension": "hardness",
+            "condition_value_map": {},
+            "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9331295/table/materials-15-05107-t001/",
+            "citation": "./ref/Leather/Young's Modulus.png"
+          },
             "Poisson's Ratio": {
                 "value": 1.2,
                 "units": "None",
@@ -817,14 +817,14 @@
     },
     "Fabric": {
         "Tactile Compliance": {
-            "Young's Modulus": {
-                "value": null,
-                "units": "Pa, MPa, GPa",
-                "haptic_dimension": "hardness",
-                "condition_value_map": {},
-                "source": "https://material-properties.org/cotton",
-                "citation": ""
-            },
+          "Young's Modulus": {
+            "value": 58,
+            "units": "GPa",
+            "haptic_dimension": "hardness",
+            "condition_value_map": {},
+            "source": "https://www.bestech.com.au/wp-content/uploads/Modulus-of-Elasticity.pdf",
+            "citation": ""
+          },
             "Poisson's Ratio": {
                 "value": 0.5,
                 "units": "None",
@@ -1021,14 +1021,14 @@
     },
     "Concrete": {
         "Tactile Compliance": {
-            "Young's Modulus": {
-                "value": 20,
-                "units": "GPa",
-                "haptic_dimension": "hardness",
-                "condition_value_map": {},
-                "source": "https://material-properties.org/concrete",
-                "citation": "./ref/Concrete/Young's Modulus.png"
-            },
+          "Young's Modulus": {
+            "value": 30,
+            "units": "GPa",
+            "haptic_dimension": "hardness",
+            "condition_value_map": {},
+            "source": "https://doi-org.ezlibrary.technion.ac.il/10.1007/978-3-319-38925-7_15",
+            "citation": "./ref/Concrete/Young's Modulus.png"
+          },
             "Poisson's Ratio": {
                 "value": 0.17,
                 "units": "None",
@@ -1144,8 +1144,8 @@
         },
         "Macro Roughness": {
             "Roughness Parameters": {
-                "value": 0.0003,
-                "units": "m",
+                "value": 300,
+                "units": "um",
                 "haptic_dimension": "macroscopic roughness",
                 "condition_value_map": {},
                 "source": "https://www.academia.edu/11742067/RULES_OF_THUMB_FOR_CHEMICAL_ENGINEERS",
@@ -1430,16 +1430,16 @@
     },
     "Soil": {
         "Tactile Compliance": {
-            "Young's Modulus": {
-                "value": 20,
-                "units": "MPa",
-                "haptic_dimension": "hardness",
-                "condition_value_map": {},
-                "source": "https://environment.uwe.ac.uk/geocal/SoilMech/basic/stiffness.htm",
-                "citation": "./ref/Soil/Young's Modulu.png"
-            },
+          "Young's Modulus": {
+            "value": 0.01,
+            "units": "GPa",
+            "haptic_dimension": "hardness",
+            "condition_value_map": {},
+            "source": "https://www.geotechdata.info/parameter/soil-young-s-modulus",
+            "citation": "./ref/Soil/Young's Modulus.png"
+          },
             "Poisson's Ratio": {
-                "value": 0.25,
+                "value": 0.3,
                 "units": "None",
                 "haptic_dimension": "hardness",
                 "condition_value_map": {},
@@ -1552,14 +1552,14 @@
             }
         },
 		"Macro Roughness": {
-            "Roughness Parameters": {
-                "value": 1.78,
-                "units": "cm",
-                "haptic_dimension": "macroscopic roughness",
-                "condition_value_map": {},
-                "source": "https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/soil-surface-roughness",
-                "citation": "./ref/Soil/roughness.png"
-            }
+      "Roughness Parameters": {
+        "value": 17800,
+        "units": "um",
+        "haptic_dimension": "macroscopic roughness",
+        "condition_value_map": {},
+        "source": "https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/soil-surface-roughness",
+        "citation": "./ref/Soil/roughness.png"
+      }
         },
         "Macro Regularity": {
             "Spatial Periodicity": {

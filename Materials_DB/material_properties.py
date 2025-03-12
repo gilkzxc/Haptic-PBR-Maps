@@ -51,7 +51,7 @@ def create_maps(predicted_map):
         properties_maps[property.label] = create_property_map(predicted_map,property.category,property.name)
     return properties_maps
 
-def create_property_map(pixel_array, type, name):
+def create_property_map(pixel_array, category, name):
     if isinstance(pixel_array, list):
         pixel_array = np.array(pixel_array)
     new_array = np.zeros_like(pixel_array, dtype=float)
@@ -60,10 +60,10 @@ def create_property_map(pixel_array, type, name):
         for j in range(cols):
             if pixel_array[i, j] in material_properties_dict:
                 characteristics = material_properties_dict[pixel_array[i, j]]
-                new_array[i, j] = characteristics[type][name]["value"]
+                new_array[i, j] = characteristics[category][name]["value"]
             elif pixel_array[i, j] in key_translator:
                 characteristics = material_properties_dict[key_translator[pixel_array[i, j]]]
-                new_array[i, j] = characteristics[type][name]["value"]
+                new_array[i, j] = characteristics[category][name]["value"]
             else:
                 new_array[i, j] = np.nan
     return new_array
