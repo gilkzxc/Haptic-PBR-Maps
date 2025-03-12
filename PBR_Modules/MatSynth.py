@@ -79,7 +79,7 @@ if __name__ == '__main__':
         category = ds_test[i]['metadata']['category']
         if category in simpler_ds:
             simpler_ds[category].append(ds_test[i])
-        elif key_translator[category] in simpler_ds:
+        elif category in key_translator and key_translator[category] in simpler_ds:
             simpler_ds[key_translator[category]].append(ds_test[i])
     for category in simpler_ds:
         for i in range(len(simpler_ds[category])):
