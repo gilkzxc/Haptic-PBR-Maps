@@ -159,7 +159,7 @@ class Task:
                 if dms_pipeline.run_pipeline():
                     print("Passing workload to children")
                     for child_index in range(len(self.children)):
-                        self.children[child_index] = dms_pipeline.pipeline_infered.popleft()
+                        self.children[child_index].material_segmentation = dms_pipeline.pipeline_infered.popleft()
                     print("Done...")
                     return True
                 return False
