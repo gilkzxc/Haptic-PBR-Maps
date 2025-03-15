@@ -26,3 +26,5 @@ dependencies:
         - questionary
         - pyrr
         - gradio_client
+        - sentencepiece
+        - protobuf

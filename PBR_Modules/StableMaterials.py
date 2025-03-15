@@ -6,7 +6,7 @@ import torch
 from os import path
 from PIL import Image
 
-
+#pipe = DiffusionPipeline.from_pretrained("/home/gilyoav/StableMaterials", trust_remote_code=True, torch_dtype=torch.float16)
 
 class PBR_Diffuser:
     def __init__(self, is_consistent = False):
