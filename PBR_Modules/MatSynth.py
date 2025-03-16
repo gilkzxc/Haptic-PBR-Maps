@@ -8,6 +8,7 @@ except ImportError:
 import glob
 import json
 import argparse
+import time
 
 # image processing function        
 def process_img(x, scale = 512):
@@ -55,7 +56,7 @@ class MatSynth:
         
 if __name__ == '__main__':
     #material_DB_keys = ['Wood', 'Metal', 'Stone', 'Leather', 'Fabric', 'Concrete', 'Ceramic', 'Soil']
-    material_DB_keys = ['Wood', 'Metal', 'Fabric']
+    material_DB_keys = ['Wood', 'Metal', 'Fabric', 'Stone', 'Concrete']
     MatSynth_test_keys = ['Plastic', 'Ground', 'Metal', 'Concrete', 'Terracotta', 'Misc', 'Wood', 'Ceramic', 'Stone', 'Leather', 'Fabric', 'Marble', 'Plaster']
     key_translator = {"Ground":"Soil", "Soil":"Ground"}
     parser = argparse.ArgumentParser()
@@ -68,7 +69,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '--PBR_path',
         type=str,
-        default="/export/PBR",
+        default="/export/PBR2",
         help='path to the test files directory',
     )
     args = parser.parse_args()
@@ -77,11 +78,13 @@ if __name__ == '__main__':
     ds_test = MS.dataset['test']
     simpler_ds = {key:[] for key in material_DB_keys}
     print("Before filling simpler_ds")
-    #for i in range(len(ds_test)):
-    for i in range(30,60):
+    for i in range(len(ds_test)):
+    #for i in range(0,60):
         category = ds_test[i]['metadata']['category']
         if category in simpler_ds:
             simpler_ds[category].append(ds_test[i])
+        if i%10 == 0:
+            time.sleep(5)
         """elif category in key_translator and key_translator[category] in simpler_ds:
             simpler_ds[key_translator[category]].append(ds_test[i])"""
     """try:
@@ -94,4 +97,8 @@ if __name__ == '__main__':
             name = simpler_ds[category][i]['name']
             #simpler_ds[category][i] = p
             p.save(f"{args.PBR_path}/{category}/{name}")
+            if i%10 == 0:
+                time.sleep(5)
+        if i%10 == 0:
+            time.sleep(10)
 
