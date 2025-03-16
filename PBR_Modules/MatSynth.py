@@ -78,7 +78,7 @@ if __name__ == '__main__':
     simpler_ds = {key:[] for key in material_DB_keys}
     print("Before filling simpler_ds")
     #for i in range(len(ds_test)):
-    for i in range(10,30):
+    for i in range(30,60):
         category = ds_test[i]['metadata']['category']
         if category in simpler_ds:
             simpler_ds[category].append(ds_test[i])
