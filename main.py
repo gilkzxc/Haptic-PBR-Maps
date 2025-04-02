@@ -29,6 +29,10 @@ def yes_no_question(question):
     
 
 def runCycle(tasks_pipe, dms_pipeline, sm_diffuser, mf_diffuser):
+    """
+        runCycle:
+            Function that implements our pipeline and it's stations. The state machine.
+    """
     new_pipe = deque([])
     while len(tasks_pipe) > 0:
         head = tasks_pipe.popleft()
@@ -61,6 +65,18 @@ def runCycle(tasks_pipe, dms_pipeline, sm_diffuser, mf_diffuser):
 
 
 def getPrompt(output_folder):
+    """
+        getPrompt:
+            Handling and running the main CLI interface by parsing user choice and input prompt to the desired tasks.
+            Tasks are the object we use to handle the data inside the pipeline. See more in tasks.py
+            Function also act as first defence against prompt injection.
+
+            The input will be organised accourding to the found type.
+            We accept only single level of directory of images.
+            Function also handles PBR ready input. Prompt must be a path to a folder with tile maps and a render.png as base for rest of pipeline.
+            
+            Returns the releavent Task() for the prompt that was enterd, in the correct type, settings, and initial state. (PBR Ready skips PBR Generation.)
+    """
     prompt_type = questionary.select("Type of prompt:",choices=tasks.prompt_types+["PBR render with tile maps"]).ask()
     if prompt_type == "PBR render with tile maps":
         folder_path = questionary.path("Enter path to render and tile maps folder: ").ask()
@@ -101,7 +117,7 @@ def main(args):
     load_properties_json(args.properties_json)
     run = True
     dms_pipeline = ml_dms_dataset.infering_pipeline(args.pretrained_dms_path)
-    sm_diffuser = StableMaterials.PBR_Diffuser()
+    sm_diffuser = StableMaterials.PBR_Diffuser(fromPath=args.pretrained_sm_path)
     #mf_diffuser = MatForger.PBR_Diffuser()
     mf_diffuser = None
     os.makedirs(args.output_folder, exist_ok=True)
@@ -124,6 +140,12 @@ if __name__ == '__main__':
         type=str,
         default=f'{current_dir}/ml_dms_dataset/DMS46_v1.pt',
         help='path to the pretrained model of DMS',
+    )
+    parser.add_argument(
+        '--pretrained_sm_path',
+        type=str,
+        default=f'{current_dir}/StableMaterials',
+        help='path to the pretrained model of SM',
     )
     parser.add_argument(
         '--properties_json',

@@ -7,7 +7,12 @@ import os
 from pyrr import Matrix44, Vector3
 tile_maps_keys = ['basecolor','diffuse','displacement','height','metallic','normal','opacity','roughness','specular','blend_mask']
 
-
+"""
+    PBR class:
+        A wrapper class for tile maps and rendered image.
+        The class has a renderer function, to_render(), but scene parameters like the matricies we see in __init__() we couldn't find right one to use.
+        Vertex and Fragment Shaders are credit to and based as written in the comments below.
+"""
 class PBR:
     def __init__(self, tile_maps = None):
         self.render = None

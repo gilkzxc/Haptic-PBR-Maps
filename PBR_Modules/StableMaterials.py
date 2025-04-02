@@ -6,19 +6,23 @@ import torch
 from os import path
 from PIL import Image
 
-#pipe = DiffusionPipeline.from_pretrained("/home/gilyoav/StableMaterials", trust_remote_code=True, torch_dtype=torch.float16)
 
+"""
+    Wrapper class for StableMaterials.
+    fromPath can accept a path to local version of the model. See DiffusionPipeline.from_pretraiend() for more.
+    Generator(): Accept prompt and returns a PBR() class wrapper.
+"""
 class PBR_Diffuser:
-    def __init__(self, is_consistent = False):
+    def __init__(self, fromPath = "gvecchio/StableMaterials", is_consistent = False):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.unet = None
         if is_consistent:
-            self.unet = UNet2DConditionModel.from_pretrained("gvecchio/StableMaterials",subfolder="unet_lcm",torch_dtype=torch.float16,)
-            self.pipe = DiffusionPipeline.from_pretrained("gvecchio/StableMaterials", trust_remote_code=True, unet=self.unet, torch_dtype=torch.float16)
+            self.unet = UNet2DConditionModel.from_pretrained(fromPath,subfolder="unet_lcm",torch_dtype=torch.float16,)
+            self.pipe = DiffusionPipeline.from_pretrained(fromPath, trust_remote_code=True, unet=self.unet, torch_dtype=torch.float16)
             self.pipe.scheduler = LCMScheduler.from_config(self.pipe.scheduler.config)
             self.num_inference_steps = 4
         else:
-            self.pipe = DiffusionPipeline.from_pretrained("gvecchio/StableMaterials", trust_remote_code=True, torch_dtype=torch.float16)
+            self.pipe = DiffusionPipeline.from_pretrained(fromPath, trust_remote_code=True, torch_dtype=torch.float16)
             self.num_inference_steps = 50
 
         self.pipe.to(self.device)

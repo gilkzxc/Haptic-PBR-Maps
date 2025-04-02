@@ -10,8 +10,14 @@ from gradio_client import Client
 from shutil import rmtree
 from Materials_DB.material_properties import load_properties_json,run_material_properties
 from Haptic_Transform import hPBR
+from diffusers import StableDiffusion3Pipeline
+import torch
 
 def is_valid_url(s):
+    """
+        URL string validation function:
+            Returns True only for a working URL path.
+    """
     try:
         result = urlparse(s)
         if not all([result.scheme, result.netloc]):
@@ -32,7 +38,27 @@ def is_valid_url(s):
     except Exception as e:
         return False, f"An unexpected error occurred: {e}"
 
-def genImage(prompt_input, negative_prompt_input = "", width = 512, height = 512, guidance_scale = 4.5,num_inference_steps=40):
+def genImage(prompt_input, negative_prompt_input = "", width = 512, height = 512, guidance_scale = 4.5,num_inference_steps=40, isOfflineInference = False):
+    """
+        Running inference call on StableDiffusion 3.5 Large.
+        Offline run needs a GPU better than Nvidia GTX 1080 Ti, to support bfloat and have +11 GB RAM.
+        Online run needs HuggingFace account registerd to usage.
+    """
+    if isOfflineInference:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        pipe = StableDiffusion3Pipeline.from_pretrained("stabilityai/stable-diffusion-3.5-large", torch_dtype=torch.bfloat16)
+        pipe = pipe.to(device)
+        image = pipe(
+            prompt_input,
+            width=width,
+		    height=height,
+            num_inference_steps=num_inference_steps,
+            guidance_scale=guidance_scale,
+        ).images[0]
+        image.save(f"{prompt_input}.png")
+        print(f"Offline genImage successful, for {prompt_input}.")
+        return f"{prompt_input}.png"
+
     client = Client("stabilityai/stable-diffusion-3.5-large")
     result = client.predict(
 		    prompt=prompt_input,
@@ -49,8 +75,15 @@ def genImage(prompt_input, negative_prompt_input = "", width = 512, height = 512
     file_path = result[0]
     return file_path
 
-
+# Constants
 prompt_types = ["Folder Path", "File Path", "Url Path", "Free Text"]
+States = ["PBR transform","Material Segmentation","Material Properties","Haptic Transform"]
+
+
+"""
+    Prompt class:
+        Handles parsing prompt string input into the 4 types of prompts.
+"""
 class prompt:
     def __init__(self, prompt_input, prompt_type = None):
         if not isinstance(prompt_input, str):
@@ -73,8 +106,11 @@ class prompt:
 
 
 
-States = ["PBR transform","Material Segmentation","Material Properties","Haptic Transform"]
 
+"""
+    Task class:
+        Main wrapper object that saves and operate all data and eventual pipeline station over the data.
+"""
         
 class Task:
     def __init__(self, prompt_input, output_parent_dir = "./", init_state = 0):
@@ -255,7 +291,7 @@ class Task:
                 return True
             return False
 
-    def to_HapticTransform(self):
+    def to_HapticTransform(self, run_verification = False):
         print(f"Prompt: {self.prompt_text.value} , begins Haptic transform.")
         if self.isTaskDir():
             if self.children:
@@ -269,15 +305,14 @@ class Task:
             for prompt_type in self.PBR["SM"]:
                 result = hPBR(f"{self.output_dir}/{prompt_type}_prompt.hpbr",self.material_properties, self.PBR["SM"][prompt_type])
                 result.transform()
-                # Maybe verification?
-                """
-                verify_result = hPBR().fromFile(f"{self.output_dir}/{prompt_type}_prompt.hpbr")
-                if verify_result.material_prop == self.material_properties and
-                    self.PBR["SM"][prompt_type].tile_maps == verify_result.pbr.tile_maps:
-                    print(f"{self.output_dir} was saved in hPBR format.")
-                else:
-                    print(f"{self.output_dir} hPBR compiling ERROR.")
-                """
+
+                if run_verification:
+                    verify_result = hPBR().fromFile(f"{self.output_dir}/{prompt_type}_prompt.hpbr")
+                    if verify_result.material_prop == self.material_properties and self.PBR["SM"][prompt_type].tile_maps == verify_result.pbr.tile_maps:
+                            print(f"{self.output_dir} was saved in hPBR format.")
+                    else:
+                        print(f"{self.output_dir} hPBR compiling ERROR.")
+                
         print("Done...")
         
             

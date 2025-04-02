@@ -8,11 +8,19 @@ import os
 
 from PBR_Modules.PBR import PBR
 
-
+#Constants
 magic_num = bytes([0x68,0x50,0x42,0x52]) # "hPBR".encode().hex()
 
 version = 1
 
+
+"""
+    hPBR:
+        A class that represents our vision to how Haptic PBR Maps should be stored. The Data Structure.
+        The class gets from the Task pipeline object the PBR tile maps and Haptic Material Properties maps.
+        Afterwards, the class is being used to write the .hPBR file, the eventual composed data for datasets.
+        It also has the ability to read the file, and back into hPBR() Data structuer.
+"""
 class hPBR:
     def __init__(self, file_path = "", material_properties_dict = {}, pbr = PBR()):
         self.path = file_path

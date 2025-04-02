@@ -55,6 +55,7 @@ class MatSynth:
         return result
         
 if __name__ == '__main__':
+    # Script for easier offline extraction from MatSynth. - Tile Maps stored as image files.
     #material_DB_keys = ['Wood', 'Metal', 'Stone', 'Leather', 'Fabric', 'Concrete', 'Ceramic', 'Soil']
     material_DB_keys = ['Wood', 'Metal', 'Fabric', 'Stone', 'Concrete']
     MatSynth_test_keys = ['Plastic', 'Ground', 'Metal', 'Concrete', 'Terracotta', 'Misc', 'Wood', 'Ceramic', 'Stone', 'Leather', 'Fabric', 'Marble', 'Plaster']
@@ -85,8 +86,8 @@ if __name__ == '__main__':
             simpler_ds[category].append(ds_test[i])
         if i%10 == 0:
             time.sleep(5)
-        """elif category in key_translator and key_translator[category] in simpler_ds:
-            simpler_ds[key_translator[category]].append(ds_test[i])"""
+        elif category in key_translator and key_translator[category] in simpler_ds:
+            simpler_ds[key_translator[category]].append(ds_test[i])
     """try:
         print(json.dumps(simpler_ds))
     except:
