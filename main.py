@@ -117,7 +117,7 @@ def main(args):
     load_properties_json(args.properties_json)
     run = True
     dms_pipeline = ml_dms_dataset.infering_pipeline(args.pretrained_dms_path)
-    sm_diffuser = StableMaterials.PBR_Diffuser(fromPath=args.pretrained_sm_path)
+    sm_diffuser = StableMaterials.PBR_Diffuser(fromPath=args.pretrained_sm_path) # If one wants to use on latest online pretrained, remove argument.
     #mf_diffuser = MatForger.PBR_Diffuser()
     mf_diffuser = None
     os.makedirs(args.output_folder, exist_ok=True)
