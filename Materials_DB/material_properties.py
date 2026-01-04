@@ -1,11 +1,4 @@
 #
-# For licensing see accompanying LICENSE file.
-# Copyright (C) 2022 Apple Inc. All Rights Reserved.
-#
-# This code accompanies the research paper: Upchurch, Paul, and Ransen
-# Niu. "A Dense Material Segmentation Dataset for Indoor and Outdoor
-# Scene Parsing." ECCV 2022.
-#
 # This example shows how to predict materials.
 #
 
@@ -115,4 +108,5 @@ def run_material_properties(predicted_map,output_dir,file_name):
     save_map_as_png(output_maps,file_base_name,output_dir)
     #print_map(output)
     return output_maps
+
 
