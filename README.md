@@ -22,3 +22,10 @@ Each chunk is a PBR tile map or a property map. The chunk consists of the follow
 *	Name length and Name – The name of the map ( e.g. Possion Ratio, Young’s Modulus or Height) and the length of the name, so each map can have an insightful name attached in mostly it’s readable     compistion.
 *	Payload – The binary data of the map.
 *	Chunk checksum – CRC32 of the payload, to ensure the map itself isn’t corrupted.
+
+
+## Reference
+* **Vecchio, Giuseppe.** “*StableMaterials: Enhancing Diversity in Material Generation via Semi-Supervised Learning*.” *arXiv preprint* [arXiv:2406.09293](https://arxiv.org/abs/2406.09293), 2024.
+* **Upchurch, Paul and Niu, Ransen.** “*A Dense Material Segmentation Dataset for Indoor and Outdoor Scene Parsing*.” In *European Conference on Computer Vision (ECCV)* [arXiv:2207.10614](https://arxiv.org/abs/2207.10614), 2022.
+* **Vecchio, Giuseppe and Deschaintre, Valentin.** “*MatSynth: A Modern PBR Materials Datase*.” In *Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition* [arXiv:2401.06056](https://arxiv.org/abs/2401.06056), 2024.
+
